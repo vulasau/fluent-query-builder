@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentQueryBuilder", "FluentQueryBuilder\FluentQueryBuilder.csproj", "{D1424D14-99B1-44E6-A91E-518D6EECE97B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentQueryBuilder.Tests", "FluentQueryBuilder.Tests\FluentQueryBuilder.Tests.csproj", "{166AE013-9C83-48CC-9253-31659BE4F34D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1424D14-99B1-44E6-A91E-518D6EECE97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1424D14-99B1-44E6-A91E-518D6EECE97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1424D14-99B1-44E6-A91E-518D6EECE97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1424D14-99B1-44E6-A91E-518D6EECE97B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{166AE013-9C83-48CC-9253-31659BE4F34D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{166AE013-9C83-48CC-9253-31659BE4F34D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{166AE013-9C83-48CC-9253-31659BE4F34D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{166AE013-9C83-48CC-9253-31659BE4F34D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
