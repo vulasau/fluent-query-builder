@@ -6,12 +6,12 @@ using FluentQueryBuilder.Configuration;
 
 namespace FluentQueryBuilder.Extensions
 {
-    public static class FluentExpressionExtensions
+    public static class ExpressionExtensions
     {
         private static readonly IExpressionTypeTransformer _expressionTypeTransformer;
         private static readonly IStringificationRulesResolver _stringificationRulesResolver;
 
-        static FluentExpressionExtensions()
+        static ExpressionExtensions()
         {
             _expressionTypeTransformer = ExpressionParserConfiguration.ExpressionTypeTransformer;
             _stringificationRulesResolver = ExpressionParserConfiguration.StringificationRulesResolver;
@@ -44,6 +44,11 @@ namespace FluentQueryBuilder.Extensions
             {
                 var binaryExpression = (BinaryExpression)expression;
                 return binaryExpression.Process<T>();
+            }
+            else if (expression is UnaryExpression)
+            {
+                var unaryExpression = (UnaryExpression) expression;
+                return CompileExpression(unaryExpression);
             }
             else
             {

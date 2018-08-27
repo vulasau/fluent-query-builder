@@ -57,10 +57,11 @@
     <Compile Include="Converters\DoubleConverterTests.cs" />
     <Compile Include="Converters\IntegerConverterTests.cs" />
     <Compile Include="Converters\ObjectConverterTests.cs" />
-    <Compile Include="Extensions\FluentMappingExtensonsTests.cs" />
-    <Compile Include="Extensions\FluentExpressionExtensionsTests.cs" />
+    <Compile Include="Extensions\MappingExtensonsTests.cs" />
+    <Compile Include="Extensions\ExpressionExtensionsTests.cs" />
     <Compile Include="Models\NamedFluentModel.cs" />
     <Compile Include="Models\FluentModel.cs" />
+    <Compile Include="Query\QueryProviderTests.cs" />
     <Compile Include="StringificationRulesResolverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConditionResolverTests.cs" />

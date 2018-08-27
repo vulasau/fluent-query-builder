@@ -2,12 +2,12 @@
 
 namespace FluentQueryBuilder.Configuration
 {
-    public static class QueryBuilderConfiguration
+    public static class ObjectMapperConfiguration
     {
         public static IConditionResolver ConditionResolver { get; private set; }
         public static IConverterResolver ConverterResolver { get; private set; }
 
-        static QueryBuilderConfiguration()
+        static ObjectMapperConfiguration()
         {
             ConditionResolver = new ConditionResolver();
             ConverterResolver = new ConverterResolver();

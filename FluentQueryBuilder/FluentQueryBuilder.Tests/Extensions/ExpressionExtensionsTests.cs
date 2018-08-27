@@ -7,7 +7,7 @@ using FluentQueryBuilder.Tests.Models;
 namespace FluentQueryBuilder.Tests.Extensions
 {
     [TestClass]
-    public class FluentExpressionExtensionsTests
+    public class ExpressionExtensionsTests
     {
         [TestMethod]
         public void ParseConstantComparisonExpression()
@@ -168,9 +168,34 @@ namespace FluentQueryBuilder.Tests.Extensions
         }
 
 
+        [TestMethod]
+        public void ParseMathComparisonExpressions()
+        {
+            var actions = new Actions();
+            actions.IntegerProperty = 10;
+
+            var expressionString = ParseExpression<NamedFluentModel>(x => x.IntegerProperty == 10 + actions.IntegerProperty);
+            var expectedString = string.Format("{0} = (10 + 10)", NamedFluentModel.INTEGER_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<NamedFluentModel>(x => x.IntegerProperty >= 10 + actions.IntegerProperty && x.DoubleProperty <= actions.GetValue(3));
+            expectedString = string.Format("({0} >= (10 + 10)) AND ({1} <= 30)", NamedFluentModel.INTEGER_PROPERTY_NAME, NamedFluentModel.DOUBLE_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+        }
+
         private string ParseExpression<T>(Expression<Func<T, bool>> predicate)
         {
             return predicate.Parse();
+        }
+    }
+
+    public class Actions
+    {
+        public int IntegerProperty { get; set; }
+
+        public int GetValue(int multiplier)
+        {
+            return IntegerProperty*multiplier;
         }
     }
 }

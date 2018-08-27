@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentQueryBuilder.Attributes;
 using FluentQueryBuilder.Configuration;
@@ -6,15 +7,15 @@ using FluentQueryBuilder.Converters;
 
 namespace FluentQueryBuilder.Extensions
 {
-    public static class FluentMappingExtensons
+    public static class MappingExtensons
     {
         private static readonly IConditionResolver _conditionResolver;
         private static readonly IConverterResolver _converterResolver;
 
-        static FluentMappingExtensons()
+        static MappingExtensons()
         {
-            _conditionResolver = QueryBuilderConfiguration.ConditionResolver;
-            _converterResolver = QueryBuilderConfiguration.ConverterResolver;
+            _conditionResolver = ObjectMapperConfiguration.ConditionResolver;
+            _converterResolver = ObjectMapperConfiguration.ConverterResolver;
         }
 
         public static FluentObject MapToFluentObject<T>(this T source) where T : class, new()
@@ -86,7 +87,6 @@ namespace FluentQueryBuilder.Extensions
 
             return entity;
         }
-
 
         private static IPropertyConverter GetConverter(Type converterType, Type returnType)
         {

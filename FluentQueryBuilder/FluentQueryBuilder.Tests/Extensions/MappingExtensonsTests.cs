@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace FluentQueryBuilder.Tests.Extensions
 {
     [TestClass]
-    public class FluentMappingExtensonsTests
+    public class MappingExtensonsTests
     {
         [TestMethod]
         public void ShouldMapToFluentObject_WithAttributeNames()
