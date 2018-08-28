@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D1424D14-99B1-44E6-A91E-518D6EECE97B}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{D9721538-C8BD-41AD-B708-FF67E7455699}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FluentQueryBuilder</RootNamespace>
-    <AssemblyName>FluentQueryBuilder</AssemblyName>
+    <RootNamespace>FluentQueryBuilder.Application</RootNamespace>
+    <AssemblyName>FluentQueryBuilder.Application</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,39 +42,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\FluentEntityAttribute.cs" />
-    <Compile Include="Attributes\FluentPropertyAttribute.cs" />
-    <Compile Include="ConditionResolver.cs" />
-    <Compile Include="Configuration\ExpressionParserConfiguration.cs" />
-    <Compile Include="Configuration\ObjectMapperConfiguration.cs" />
-    <Compile Include="ConverterResolver.cs" />
-    <Compile Include="Converters\BooleanConverter.cs" />
-    <Compile Include="Converters\DateTimeConverter.cs" />
-    <Compile Include="Converters\DoubleConverter.cs" />
-    <Compile Include="Converters\IntegerConverter.cs" />
-    <Compile Include="Converters\IPropertyConverter.cs" />
-    <Compile Include="Converters\ObjectConverter.cs" />
-    <Compile Include="ExpressionTypeTransformer.cs" />
-    <Compile Include="Extensions\ExpressionExtensions.cs" />
-    <Compile Include="Extensions\MappingExtensons.cs" />
-    <Compile Include="FluentObject.cs" />
-    <Compile Include="IConditionResolver.cs" />
-    <Compile Include="IConverterResolver.cs" />
-    <Compile Include="IExpressionTypeTransformer.cs" />
-    <Compile Include="IQueryExecutor.cs" />
-    <Compile Include="IStringificationRulesResolver.cs" />
-    <Compile Include="Linq\FluentQueriable.cs" />
-    <Compile Include="Linq\IFluentQueriable.cs" />
+    <Compile Include="Converters\ExtendedConverterResolver.cs" />
+    <Compile Include="Converters\DateConverter.cs" />
+    <Compile Include="DataAccess\ContactsRepository.cs" />
+    <Compile Include="DataAccess\DataConnector.cs" />
+    <Compile Include="Features\ExtendedConditionResolver.cs" />
+    <Compile Include="Features\FeatureToggle.cs" />
+    <Compile Include="Models\Contact.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryExecutor.cs" />
-    <Compile Include="Query\IQueryProvider.cs" />
-    <Compile Include="Query\IQueryProviderFactory.cs" />
-    <Compile Include="Query\QueryBuilderHelper.cs" />
-    <Compile Include="Query\QueryProvider.cs" />
-    <Compile Include="Query\QueryProviderFactory.cs" />
-    <Compile Include="StringificationRulesResolver.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FluentQueryBuilder\FluentQueryBuilder.csproj">
+      <Project>{d1424d14-99b1-44e6-a91e-518d6eece97b}</Project>
+      <Name>FluentQueryBuilder</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

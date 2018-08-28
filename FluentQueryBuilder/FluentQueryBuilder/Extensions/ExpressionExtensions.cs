@@ -10,11 +10,13 @@ namespace FluentQueryBuilder.Extensions
     {
         private static readonly IExpressionTypeTransformer _expressionTypeTransformer;
         private static readonly IStringificationRulesResolver _stringificationRulesResolver;
+        private static readonly IConverterResolver _ConverterResolver;
 
         static ExpressionExtensions()
         {
             _expressionTypeTransformer = ExpressionParserConfiguration.ExpressionTypeTransformer;
             _stringificationRulesResolver = ExpressionParserConfiguration.StringificationRulesResolver;
+            _ConverterResolver = ObjectMapperConfiguration.ConverterResolver;
         }
 
         public static string Parse<T>(this Expression<Func<T, bool>> predicate)
@@ -92,7 +94,9 @@ namespace FluentQueryBuilder.Extensions
         {
             var stringify = _stringificationRulesResolver.RequiresStringification(constantExpression.Type);
             var value = constantExpression.Value;
-            var valueString = string.Format("{0}", value);
+
+            var converter = _ConverterResolver.Resolve(constantExpression.Type);
+            var valueString = converter.ConvertBack(value);
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
         }
@@ -119,7 +123,9 @@ namespace FluentQueryBuilder.Extensions
             var getterExpression = Expression.Lambda<Func<object>>(unaryExpression);
             var getter = getterExpression.Compile();
             var value = getter();
-            var valueString = string.Format("{0}", value);
+
+            var converter = _ConverterResolver.Resolve(expression.Type);
+            var valueString = converter.ConvertBack(value);
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
         }

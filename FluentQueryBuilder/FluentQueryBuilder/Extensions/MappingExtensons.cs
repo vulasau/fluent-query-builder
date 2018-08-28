@@ -75,7 +75,7 @@ namespace FluentQueryBuilder.Extensions
                 if (!condition)
                     continue;
 
-                var key = fluentEntityAttribute.Name ?? prop.Name;
+                var key = fluentPropertyAttribute.Name ?? prop.Name;
                 if (source.ContainsKey(key))
                 {
                     var valueString = source[key];

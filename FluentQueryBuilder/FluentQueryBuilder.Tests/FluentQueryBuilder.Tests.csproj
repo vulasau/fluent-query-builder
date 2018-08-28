@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -59,6 +62,8 @@
     <Compile Include="Converters\ObjectConverterTests.cs" />
     <Compile Include="Extensions\MappingExtensonsTests.cs" />
     <Compile Include="Extensions\ExpressionExtensionsTests.cs" />
+    <Compile Include="Linq\BasicFluentQueryable.cs" />
+    <Compile Include="Linq\FluentQueriableTests.cs" />
     <Compile Include="Models\NamedFluentModel.cs" />
     <Compile Include="Models\FluentModel.cs" />
     <Compile Include="Models\NamedFluentModelBase.cs" />
@@ -75,7 +80,9 @@
     <Compile Include="ExpressionTypeTransformerTests.cs" />
     <Compile Include="FluentObjectTests.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentQueryBuilder\FluentQueryBuilder.csproj">
       <Project>{D1424D14-99B1-44E6-A91E-518D6EECE97B}</Project>

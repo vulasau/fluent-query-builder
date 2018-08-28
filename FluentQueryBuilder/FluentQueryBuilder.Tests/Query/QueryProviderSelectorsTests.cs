@@ -27,7 +27,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildGetAllMultiConditionalQuery()
         {
             var query = _queryProvider.Where(x => x.BooleanProperty == true).Where(x => x.IntegerProperty > 10 && x.DateProperty == new DateTime(2018, 1, 1)).ToArray();
-            var expectedString = "SELECT boolean, date, double, integer, object FROM model \r\nWHERE (boolean = True)  AND ((integer > 10) AND (date = \"1/1/2018 12:00:00 AM\")) \r\n";
+            var expectedString = "SELECT boolean, date, double, integer, object FROM model \r\nWHERE (boolean = True)  AND ((integer > 10) AND (date = '1/1/2018 12:00:00 AM')) \r\n";
             Assert.AreEqual(expectedString, query);
         }
 

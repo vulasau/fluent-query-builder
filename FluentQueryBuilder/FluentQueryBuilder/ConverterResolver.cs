@@ -5,7 +5,7 @@ namespace FluentQueryBuilder
 {
     public class ConverterResolver : IConverterResolver
     {
-        public IPropertyConverter Resolve(Type type)
+        public virtual IPropertyConverter Resolve(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("type", "parameter 'type' should be set");
