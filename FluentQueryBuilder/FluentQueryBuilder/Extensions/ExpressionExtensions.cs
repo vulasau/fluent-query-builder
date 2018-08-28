@@ -138,7 +138,7 @@ namespace FluentQueryBuilder.Extensions
 
         private static string WrapWithQuotes(this string source)
         {
-            return string.Format("\"{0}\"", source);
+            return string.Format("'{0}'", source);
         }
 
         private static string WrapWithBrackets(this string source)
