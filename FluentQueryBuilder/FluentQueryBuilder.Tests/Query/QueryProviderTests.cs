@@ -7,18 +7,18 @@ namespace FluentQueryBuilder.Tests.Query
     [TestClass]
     public class QueryProviderTests
     {
-        private IQueryProvider<NamedFluentModel> _queryProvider;
+        protected IQueryProvider<NamedFluentModel> _queryProvider;
 
         [TestInitialize]
         public void InitializeTest()
         {
             _queryProvider = new QueryProvider<NamedFluentModel>();
         }
-        
-        [TestMethod]
-        public void ShouldBuildWhereQuery()
+
+        [TestCleanup]
+        public void CleanupTest()
         {
-            var query = _queryProvider.Where(x => x.BooleanProperty == false || (x.IntegerProperty < 10 && x.DoubleProperty > 20.5)).Build();
+            _queryProvider = null;
         }
     }
 }

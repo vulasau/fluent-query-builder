@@ -23,7 +23,7 @@ namespace FluentQueryBuilder.Query
             if (fluentEntityAttribute == null)
                 return null;
 
-            var props = typeof (T).GetProperties();
+            var props = typeof (T).GetProperties().OrderBy(x => x.Name).ToArray();
             var propertyNames = new List<string>();
 
             foreach (var prop in props)

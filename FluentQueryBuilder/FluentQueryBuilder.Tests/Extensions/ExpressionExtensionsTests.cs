@@ -183,9 +183,24 @@ namespace FluentQueryBuilder.Tests.Extensions
             Assert.AreEqual(expressionString, expectedString);
         }
 
+
+        [TestMethod]
+        public void ParseMemberAccessSelector()
+        {
+            var expressionString = ParseExpression<NamedFluentModel, int>(x => x.IntegerProperty);
+            var expectedString = string.Format(NamedFluentModel.INTEGER_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+        }
+
+
         private string ParseExpression<T>(Expression<Func<T, bool>> predicate)
         {
             return predicate.Parse();
+        }
+
+        private string ParseExpression<T, TOut>(Expression<Func<T, TOut>> selector)
+        {
+            return selector.ParseMemberExpression();
         }
     }
 

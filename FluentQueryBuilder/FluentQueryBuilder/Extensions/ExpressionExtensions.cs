@@ -22,6 +22,18 @@ namespace FluentQueryBuilder.Extensions
             return ParseExpression<T>(predicate.Body);
         }
 
+        public static string ParseMemberExpression<T, TOut>(this Expression<Func<T, TOut>> predicate)
+        {
+            var expression = predicate.Body;
+
+            if (expression is MemberExpression)
+            {
+                var memberExpression = (MemberExpression) expression;
+                return memberExpression.Process<T>();
+            }
+
+            throw new ArgumentException("Parameter 'expression' should be of type 'MemberExpression'", "expression");
+        }
 
         private static string ParseExpression<T>(Expression expression)
         {
@@ -49,6 +61,11 @@ namespace FluentQueryBuilder.Extensions
             {
                 var unaryExpression = (UnaryExpression) expression;
                 return CompileExpression(unaryExpression);
+            }
+            else if (expression is NewExpression)
+            {
+                var newExpression = (NewExpression) expression;
+                return CompileExpression(newExpression);
             }
             else
             {
@@ -87,7 +104,7 @@ namespace FluentQueryBuilder.Extensions
 
         private static string Process<T>(this MemberExpression memberExpression)
         {
-            if (memberExpression.Member.ReflectedType == typeof (T) && !memberExpression.ToString().StartsWith("value"))
+            if (memberExpression.Member.ReflectedType.IsAssignableFrom(typeof(T)) && !memberExpression.ToString().StartsWith("value"))
                 return ExtractMemberName<T>(memberExpression);
             else
                 return CompileExpression(memberExpression);
