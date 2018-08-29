@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Attributes\FluentEntityAttributeTests.cs" />
     <Compile Include="Attributes\FluentPropertyAttributeTests.cs" />
+    <Compile Include="ConditionResolverBase.cs" />
     <Compile Include="Converters\BooleanConverterTests.cs" />
     <Compile Include="Converters\DateTimeConverterTests.cs" />
     <Compile Include="Converters\DoubleConverterTests.cs" />

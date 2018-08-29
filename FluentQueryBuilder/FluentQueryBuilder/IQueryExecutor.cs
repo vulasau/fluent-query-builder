@@ -4,7 +4,8 @@ namespace FluentQueryBuilder
 {
     public interface IQueryExecutor
     {
-        IEnumerable<FluentObject> Execute(string query);
-        int ExecuteCountQuery(string query);
+        IEnumerable<FluentObject> ExecuteForMultiple(string query);
+        FluentObject ExecuteForSingle(string query);
+        T ExecuteForScalar<T>(string query);
     }
 }

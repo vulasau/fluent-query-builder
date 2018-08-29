@@ -10,7 +10,7 @@ namespace FluentQueryBuilder.Tests
         [TestInitialize]
         public void InitializeTest()
         {
-            _conditionResolver = new ConditionResolver();
+            _conditionResolver = new ConditionResolverBase();
         }
 
         [TestMethod]

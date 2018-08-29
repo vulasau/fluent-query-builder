@@ -44,7 +44,7 @@ namespace FluentQueryBuilder.Tests.Linq
         public void FirstOrDefault()
         {
             var query = "SELECT boolean, date FROM model \r\nLIMIT 1\r\n";
-            _queryExecutor.Expect(x => x.Execute(query)).Return(new[] {_fluentObject});
+            _queryExecutor.Expect(x => x.ExecuteForSingle(query)).Return(_fluentObject);
 
             var item = _fluentQueriable.FirstOrDefault();
 
@@ -58,7 +58,7 @@ namespace FluentQueryBuilder.Tests.Linq
         public void FirstOrDefaultWithConditions()
         {
             var query = "SELECT boolean, date FROM model \r\nWHERE (boolean = False) \r\nLIMIT 1\r\n";
-            _queryExecutor.Expect(x => x.Execute(query)).Return(new[] {_fluentObject});
+            _queryExecutor.Expect(x => x.ExecuteForSingle(query)).Return(_fluentObject);
 
             var item = _fluentQueriable.FirstOrDefault(x => x.BooleanProperty == false);
 
@@ -72,7 +72,7 @@ namespace FluentQueryBuilder.Tests.Linq
         public void Where()
         {
             var query = "SELECT boolean, date FROM model \r\nWHERE (boolean = True) \r\n";
-            _queryExecutor.Expect(x => x.Execute(query)).Return(new[] { _fluentObject });
+            _queryExecutor.Expect(x => x.ExecuteForMultiple(query)).Return(new[] { _fluentObject });
 
             var items = _fluentQueriable.Where(x => x.BooleanProperty == true).ToArray();
 

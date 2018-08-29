@@ -32,25 +32,19 @@ namespace FluentQueryBuilder.Linq
         public virtual T FirstOrDefault()
         {
             var query = _queryProvider.FirstOrDefault();
-            var items = _queryExecutor.Execute(query);
-
-            if (items == null || !items.Any())
-                return null;
+            var item = _queryExecutor.ExecuteForSingle(query);
 
             Reset();
-            return items.FirstOrDefault().MapFromFluentObject<T>();
+            return item != null ? item.MapFromFluentObject<T>() : null;
         }
 
         public virtual T FirstOrDefault(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
         {
             var query = _queryProvider.FirstOrDefault(predicate);
-            var items = _queryExecutor.Execute(query);
-
-            if (items == null || !items.Any())
-                return null;
+            var item = _queryExecutor.ExecuteForSingle(query);
 
             Reset();
-            return items.FirstOrDefault().MapFromFluentObject<T>();
+            return item != null ? item.MapFromFluentObject<T>() : null;
         }
 
         public virtual IFluentQueriable<T> Take(int number)
@@ -98,7 +92,7 @@ namespace FluentQueryBuilder.Linq
         public virtual int Count()
         {
             var query = _queryProvider.Count();
-            var result = _queryExecutor.ExecuteCountQuery(query);
+            var result = _queryExecutor.ExecuteForScalar<int>(query);
 
             Reset();
             return result;
@@ -107,7 +101,7 @@ namespace FluentQueryBuilder.Linq
         public virtual int Count(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
         {
             var query = _queryProvider.Count(predicate);
-            var result = _queryExecutor.ExecuteCountQuery(query);
+            var result = _queryExecutor.ExecuteForScalar<int>(query);
 
             Reset();
             return result;
@@ -116,7 +110,7 @@ namespace FluentQueryBuilder.Linq
         public virtual T[] ToArray()
         {
             var query = _queryProvider.ToArray();
-            var items = _queryExecutor.Execute(query).ToArray();
+            var items = _queryExecutor.ExecuteForMultiple(query).ToArray();
 
             var entities = new List<T>();
             foreach (var item in items)

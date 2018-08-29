@@ -19,7 +19,7 @@ namespace FluentQueryBuilder.Application.DataAccess
             _objects = new[] {fluentObject};
         }
 
-        public IEnumerable<FluentObject> Execute(string query)
+        public IEnumerable<FluentObject> ExecuteForMultiple(string query)
         {
             return _objects;
         }

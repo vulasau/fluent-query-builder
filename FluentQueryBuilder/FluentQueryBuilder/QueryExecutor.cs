@@ -3,16 +3,21 @@ using System.Linq;
 
 namespace FluentQueryBuilder
 {
-    public class QueryExecutor : IQueryExecutor
+    public abstract class QueryExecutor : IQueryExecutor
     {
-        public IEnumerable<FluentObject> Execute(string query)
+        public virtual IEnumerable<FluentObject> ExecuteForMultiple(string query)
         {
             return Enumerable.Empty<FluentObject>();
         }
 
-        public int ExecuteCountQuery(string query)
+        public virtual FluentObject ExecuteForSingle(string query)
         {
-            return 0;
+            return null;
+        }
+
+        public T ExecuteForScalar<T>(string query)
+        {
+            return default(T);
         }
     }
 }

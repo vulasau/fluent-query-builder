@@ -9,7 +9,6 @@ namespace FluentQueryBuilder.Configuration
 
         static ObjectMapperConfiguration()
         {
-            ConditionResolver = new ConditionResolver();
             ConverterResolver = new ConverterResolver();
         }
 
