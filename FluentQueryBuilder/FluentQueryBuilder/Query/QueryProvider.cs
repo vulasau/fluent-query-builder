@@ -12,6 +12,36 @@ namespace FluentQueryBuilder.Query
         private string _ordering;
         private string _limit;
 
+        public string Add(T entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Update(T entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Delete(T entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string AddRange(System.Collections.Generic.IEnumerable<T> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string UpdateRange(System.Collections.Generic.IEnumerable<T> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string DeleteRange(System.Collections.Generic.IEnumerable<T> entities)
+        {
+            throw new NotImplementedException();
+        }
+
         public string FirstOrDefault()
         {
             var query = new StringBuilder();

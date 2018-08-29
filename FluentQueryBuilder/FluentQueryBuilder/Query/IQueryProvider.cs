@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace FluentQueryBuilder.Query
 {
     public interface IQueryProvider<T>
     {
+        string Add(T entity);
+        string Update(T entity);
+        string Delete(T entity);
+        string AddRange(IEnumerable<T> entities);
+        string UpdateRange(IEnumerable<T> entities);
+        string DeleteRange(IEnumerable<T> entities);
+
         string FirstOrDefault();
         string FirstOrDefault(Expression<Func<T, bool>> predicate);
         IQueryProvider<T> Take(int number);
