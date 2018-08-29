@@ -8,7 +8,6 @@ namespace FluentQueryBuilder
     {
         private readonly Dictionary<string, string> _fields; 
 
-
         public string Name { get; set; }
 
         public string this[string key]
@@ -21,6 +20,16 @@ namespace FluentQueryBuilder
         {
             get { return _fields.Count; }
         }
+
+        public IEnumerable<string> Keys
+        {
+            get { return _fields.Keys; }
+        }
+
+        public IEnumerable<string> Values
+        {
+            get { return _fields.Values; }
+        } 
 
         public FluentObject()
         {
