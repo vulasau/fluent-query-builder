@@ -7,42 +7,42 @@ namespace FluentQueryBuilder.Query
 {
     public class QueryProvider<T>: IQueryProvider<T> where T : class, new()
     {
-        private string _selector;
-        private string _condition;
-        private string _ordering;
-        private string _limit;
+        protected string _selector;
+        protected string _condition;
+        protected string _ordering;
+        protected string _limit;
 
-        public string Add(T entity)
+        public virtual string Add(T entity)
         {
             throw new NotImplementedException();
         }
 
-        public string Update(T entity)
+        public virtual string Update(T entity)
         {
             throw new NotImplementedException();
         }
 
-        public string Delete(T entity)
+        public virtual string Delete(T entity)
         {
             throw new NotImplementedException();
         }
 
-        public string AddRange(System.Collections.Generic.IEnumerable<T> entities)
+        public virtual string AddRange(System.Collections.Generic.IEnumerable<T> entities)
         {
             throw new NotImplementedException();
         }
 
-        public string UpdateRange(System.Collections.Generic.IEnumerable<T> entities)
+        public virtual string UpdateRange(System.Collections.Generic.IEnumerable<T> entities)
         {
             throw new NotImplementedException();
         }
 
-        public string DeleteRange(System.Collections.Generic.IEnumerable<T> entities)
+        public virtual string DeleteRange(System.Collections.Generic.IEnumerable<T> entities)
         {
             throw new NotImplementedException();
         }
 
-        public string FirstOrDefault()
+        public virtual string FirstOrDefault()
         {
             var query = new StringBuilder();
 
@@ -58,7 +58,7 @@ namespace FluentQueryBuilder.Query
             return query.ToString();
         }
 
-        public string FirstOrDefault(Expression<Func<T, bool>> predicate)
+        public virtual string FirstOrDefault(Expression<Func<T, bool>> predicate)
         {
             var query = new StringBuilder();
 
@@ -80,16 +80,16 @@ namespace FluentQueryBuilder.Query
             return query.ToString();
         }
 
-        public IQueryProvider<T> Take(int number)
+        public virtual IQueryProvider<T> Take(int number)
         {
             if (!string.IsNullOrWhiteSpace(_limit))
                 throw new InvalidOperationException("Only one limit per expression is supported.");
 
             _limit = string.Format("LIMIT {0} ", number);
             return this;
-        } 
+        }
 
-        public IQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
+        public virtual IQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
         {
             var condition = predicate.Parse();
 
@@ -101,7 +101,7 @@ namespace FluentQueryBuilder.Query
             return this;
         }
 
-        public IQueryProvider<T> Select<TOut>(Expression<Func<T, TOut>> selctor)
+        public virtual IQueryProvider<T> Select<TOut>(Expression<Func<T, TOut>> selctor)
         {
             if (!string.IsNullOrWhiteSpace(_selector))
                 throw new InvalidOperationException("Only one selector per expression is supported.");
@@ -110,7 +110,7 @@ namespace FluentQueryBuilder.Query
             return this;
         }
 
-        public IQueryProvider<T> Select<TOut>() where TOut : class, new()
+        public virtual IQueryProvider<T> Select<TOut>() where TOut : class, new()
         {
             if (!string.IsNullOrWhiteSpace(_selector))
                 throw new InvalidOperationException("Only one selector per expression is supported.");
@@ -119,17 +119,17 @@ namespace FluentQueryBuilder.Query
             return this;
         }
 
-        public IQueryProvider<T> OrderBy<TOut>(Expression<Func<T, TOut>> selector)
+        public virtual IQueryProvider<T> OrderBy<TOut>(Expression<Func<T, TOut>> selector)
         {
             return OrderBy(selector, true);
         }
 
-        public IQueryProvider<T> OrderByDescending<TOut>(Expression<Func<T, TOut>> selector)
+        public virtual IQueryProvider<T> OrderByDescending<TOut>(Expression<Func<T, TOut>> selector)
         {
             return OrderBy(selector, false);
         }
 
-        public IQueryProvider<T> OrderBy<TOut>(Expression<Func<T, TOut>> selector, bool ascending)
+        public virtual IQueryProvider<T> OrderBy<TOut>(Expression<Func<T, TOut>> selector, bool ascending)
         {
             if (!string.IsNullOrWhiteSpace(_ordering))
                 throw new InvalidOperationException("Only one ordering per expression is supported.");
@@ -142,7 +142,7 @@ namespace FluentQueryBuilder.Query
             return this;
         }
 
-        public string Count()
+        public virtual string Count()
         {
             if (!string.IsNullOrWhiteSpace(_ordering))
                 throw new InvalidOperationException("'Count()' and 'ORDER BY' conditions can't be used together");
@@ -162,7 +162,7 @@ namespace FluentQueryBuilder.Query
             return query.ToString();
         }
 
-        public string Count(Expression<Func<T, bool>> predicate)
+        public virtual string Count(Expression<Func<T, bool>> predicate)
         {
             var query = new StringBuilder();
 
@@ -188,7 +188,7 @@ namespace FluentQueryBuilder.Query
             return query.ToString();
         }
 
-        public string ToArray()
+        public virtual string ToArray()
         {
             var query = new StringBuilder();
 
@@ -207,7 +207,7 @@ namespace FluentQueryBuilder.Query
             return query.ToString();
         }
 
-        private string GetSelector<TOut>() where TOut : class, new()
+        protected virtual string GetSelector<TOut>() where TOut : class, new()
         {
             var entityName = QueryBuilderHelper.GetFluentEntityName<T>();
             var propertyNames = QueryBuilderHelper.GetFluentPropertyNames<TOut>();
@@ -216,7 +216,7 @@ namespace FluentQueryBuilder.Query
             return selector;
         }
 
-        private string GetSelector<TOut>(Expression<Func<T, TOut>> predicate)
+        protected virtual string GetSelector<TOut>(Expression<Func<T, TOut>> predicate)
         {
             var entityName = QueryBuilderHelper.GetFluentEntityName<T>();
             var propertyName = predicate.ParseMemberExpression();

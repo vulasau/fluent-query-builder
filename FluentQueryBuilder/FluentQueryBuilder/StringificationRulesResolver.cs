@@ -4,7 +4,7 @@ namespace FluentQueryBuilder
 {
     public class StringificationRulesResolver : IStringificationRulesResolver
     {
-        public bool RequiresStringification(Type type)
+        public virtual bool RequiresStringification(Type type)
         {
             return type == typeof(string)
                || type == typeof(DateTime)

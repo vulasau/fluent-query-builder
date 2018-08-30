@@ -2,7 +2,7 @@
 {
     public class QueryProviderFactory : IQueryProviderFactory
     {
-        public IQueryProvider<T> Create<T>() where T : class, new()
+        public virtual IQueryProvider<T> Create<T>() where T : class, new()
         {
             return new QueryProvider<T>();
         }

@@ -191,7 +191,7 @@ namespace FluentQueryBuilder.Linq
             return entities.ToArray();
         }
 
-        private void Reset()
+        protected virtual void Reset()
         {
             _queryProvider = _queryProviderFactory.Create<T>();
         }
