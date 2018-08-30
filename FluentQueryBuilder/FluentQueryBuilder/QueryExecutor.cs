@@ -19,5 +19,21 @@ namespace FluentQueryBuilder
         {
             return default(T);
         }
+
+
+        public IEnumerable<FluentObject> ExecuteForMultiple(string query, string objectName)
+        {
+            return Enumerable.Empty<FluentObject>();
+        }
+
+        public FluentObject ExecuteForSingle(string query, string objectName)
+        {
+            return null;
+        }
+
+        public T ExecuteForScalar<T>(string query, string objectName)
+        {
+            return default(T);
+        }
     }
 }
