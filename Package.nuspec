@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>FluentQueryBuilder</id>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <authors>UlasauV</authors>
     <owners>UlasauV</owners>
 	<licenseUrl>https://github.com/vulasau/fluent-query-builder/blob/master/LICENSE</licenseUrl>
