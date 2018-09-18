@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Rhino.Mocks">
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -82,13 +82,13 @@
     <Compile Include="FluentObjectTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\FluentQueryBuilder\FluentQueryBuilder.csproj">
       <Project>{D1424D14-99B1-44E6-A91E-518D6EECE97B}</Project>
       <Name>FluentQueryBuilder</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -9,7 +9,7 @@
 
         public string ConvertBack(object source)
         {
-            return source.ToString();
+            return source != null ? source.ToString() : null;
         }
     }
 }

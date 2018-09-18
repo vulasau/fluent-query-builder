@@ -10,12 +10,14 @@ namespace FluentQueryBuilder.Extensions
     {
         private static readonly IExpressionTypeTransformer _expressionTypeTransformer;
         private static readonly IStringificationRulesResolver _stringificationRulesResolver;
+        private static readonly NullComparisonResolverBase _nullComparisonResolver;
         private static readonly IConverterResolver _ConverterResolver;
 
         static ExpressionExtensions()
         {
             _expressionTypeTransformer = ExpressionParserConfiguration.ExpressionTypeTransformer;
             _stringificationRulesResolver = ExpressionParserConfiguration.StringificationRulesResolver;
+            _nullComparisonResolver = ExpressionParserConfiguration.NullComparisonResolver;
             _ConverterResolver = ObjectMapperConfiguration.ConverterResolver;
         }
 
@@ -87,6 +89,9 @@ namespace FluentQueryBuilder.Extensions
 
             var node = _expressionTypeTransformer.Transform(binaryExpression.NodeType);
 
+            if (left == null || right == null)
+                return ResolverNullComparison(left, right, binaryExpression.NodeType);
+
             return string.Format("{0} {1} {2}", left, node, right);
         }
 
@@ -141,6 +146,21 @@ namespace FluentQueryBuilder.Extensions
             return propertyName;
         }
 
+        private static string ResolverNullComparison(string left, string right, ExpressionType nodeType)
+        {
+            if (nodeType != ExpressionType.Equal && nodeType != ExpressionType.NotEqual)
+                throw new InvalidOperationException("Only 'Equal' and 'NotEqual' operations are possible in 'Null' comparison expressions.");
+
+            if (left == null && right == null)
+                throw new InvalidOperationException("Only one of binary expression nodes can be null in 'Null' comparison expression.");
+
+            var isNegative = nodeType == ExpressionType.NotEqual;
+
+            if (left == null)
+                return _nullComparisonResolver.GenerateExpression(right, isNegative);
+            else
+                return _nullComparisonResolver.GenerateExpression(left, isNegative);
+        }
 
         private static string WrapWithQuotes(this string source)
         {

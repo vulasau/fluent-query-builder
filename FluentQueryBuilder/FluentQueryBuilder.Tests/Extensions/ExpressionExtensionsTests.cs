@@ -25,6 +25,14 @@ namespace FluentQueryBuilder.Tests.Extensions
             expectedString = string.Format("{0} < {1}", NamedFluentModel.INTEGER_PROPERTY_NAME, 70);
             Assert.AreEqual(expressionString, expectedString);
 
+            expressionString = ParseExpression<NamedFluentModel>(x => x.ObjectProperty == null);
+            expectedString = string.Format("{0} = NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<NamedFluentModel>(x => x.ObjectProperty != null);
+            expectedString = string.Format("{0} != NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
 
             // Unnamed attributes
             expressionString = ParseExpression<FluentModel>(x => x.BooleanProperty == true);
@@ -38,6 +46,14 @@ namespace FluentQueryBuilder.Tests.Extensions
             expressionString = ParseExpression<FluentModel>(x => x.IntegerProperty < 70);
             expectedString = string.Format("{0} < {1}", FluentModel.INTEGER_PROPERTY_NAME, 70);
             Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty == null);
+            expectedString = string.Format("{0} = NULL", FluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty != null);
+            expectedString = string.Format("{0} != NULL", FluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
         }
 
         [TestMethod]
@@ -46,6 +62,7 @@ namespace FluentQueryBuilder.Tests.Extensions
             var trueValue = true;
             var doubleValue = 50.55;
             var integerValue = 70;
+            object nullable = null;
 
             // Named attributes
             var expressionString = ParseExpression<NamedFluentModel>(x => x.BooleanProperty == trueValue);
@@ -60,6 +77,14 @@ namespace FluentQueryBuilder.Tests.Extensions
             expectedString = string.Format("{0} < {1}", NamedFluentModel.INTEGER_PROPERTY_NAME, integerValue);
             Assert.AreEqual(expressionString, expectedString);
 
+            expressionString = ParseExpression<NamedFluentModel>(x => x.ObjectProperty == nullable);
+            expectedString = string.Format("{0} = NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<NamedFluentModel>(x => x.ObjectProperty != nullable);
+            expectedString = string.Format("{0} != NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
 
             // Unnamed attributes
             expressionString = ParseExpression<FluentModel>(x => x.BooleanProperty == trueValue);
@@ -72,6 +97,14 @@ namespace FluentQueryBuilder.Tests.Extensions
 
             expressionString = ParseExpression<FluentModel>(x => x.IntegerProperty < integerValue);
             expectedString = string.Format("{0} < {1}", FluentModel.INTEGER_PROPERTY_NAME, integerValue);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty == nullable);
+            expectedString = string.Format("{0} = NULL", FluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty != nullable);
+            expectedString = string.Format("{0} != NULL", FluentModel.OBJECT_PROPERTY_NAME);
             Assert.AreEqual(expressionString, expectedString);
         }
 
@@ -106,6 +139,18 @@ namespace FluentQueryBuilder.Tests.Extensions
             expressionString = ParseExpression<FluentModel>(x => x.IntegerProperty < model.IntegerProperty);
             expectedString = string.Format("{0} < {1}", FluentModel.INTEGER_PROPERTY_NAME, model.IntegerProperty);
             Assert.AreEqual(expressionString, expectedString);
+
+
+            // Null comparison
+            model.ObjectProperty = null;
+
+            expressionString = ParseExpression<NamedFluentModel>(x => x.ObjectProperty == model.ObjectProperty);
+            expectedString = string.Format("{0} = NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty != model.ObjectProperty);
+            expectedString = string.Format("{0} != NULL", FluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
         }
 
         [TestMethod]
@@ -137,6 +182,18 @@ namespace FluentQueryBuilder.Tests.Extensions
             expressionString = ParseExpression<FluentModel>(x => x.IntegerProperty < int.Parse("70"));
             expectedString = string.Format("{0} < {1}", FluentModel.INTEGER_PROPERTY_NAME, 70);
             Assert.AreEqual(expressionString, expectedString);
+
+
+            // Null comparison
+            Func<object> method = () => { return null; };
+
+            expressionString = ParseExpression<NamedFluentModel>(x => x.ObjectProperty == method.Invoke());
+            expectedString = string.Format("{0} = NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty != method.Invoke());
+            expectedString = string.Format("{0} != NULL", FluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
         }
 
 
@@ -146,10 +203,11 @@ namespace FluentQueryBuilder.Tests.Extensions
             var booleanValue = !false;
             var integerValue = 70;
             var doubleValue = 50.55;
+            object nullable = null;
 
             // Named attributes
-            var expressionString = ParseExpression<NamedFluentModel>(x => x.BooleanProperty == booleanValue && x.IntegerProperty> integerValue);
-            var expectedString = string.Format("({0} = True) AND ({1} > {2})", NamedFluentModel.BOOLEAN_PROPERTY_NAME, NamedFluentModel.INTEGER_PROPERTY_NAME, integerValue);
+            var expressionString = ParseExpression<NamedFluentModel>(x => x.BooleanProperty == booleanValue && x.IntegerProperty > integerValue || x.ObjectProperty == nullable);
+            var expectedString = string.Format("(({0} = True) AND ({1} > {2})) OR ({3} = NULL)", NamedFluentModel.BOOLEAN_PROPERTY_NAME, NamedFluentModel.INTEGER_PROPERTY_NAME, integerValue, NamedFluentModel.OBJECT_PROPERTY_NAME);
             Assert.AreEqual(expressionString, expectedString);
 
             expressionString = ParseExpression<NamedFluentModel>(x => x.BooleanProperty == booleanValue || (x.IntegerProperty > integerValue && x.DoubleProperty < doubleValue));
@@ -158,8 +216,8 @@ namespace FluentQueryBuilder.Tests.Extensions
 
 
             // Unnamed attributes
-            expressionString = ParseExpression<FluentModel>(x => x.BooleanProperty == booleanValue && x.IntegerProperty > integerValue);
-            expectedString = string.Format("({0} = True) AND ({1} > {2})", FluentModel.BOOLEAN_PROPERTY_NAME, FluentModel.INTEGER_PROPERTY_NAME, integerValue);
+            expressionString = ParseExpression<FluentModel>(x => x.BooleanProperty == booleanValue && x.IntegerProperty > integerValue || x.ObjectProperty != nullable);
+            expectedString = string.Format("(({0} = True) AND ({1} > {2})) OR ({3} != NULL)", FluentModel.BOOLEAN_PROPERTY_NAME, FluentModel.INTEGER_PROPERTY_NAME, integerValue, FluentModel.OBJECT_PROPERTY_NAME);
             Assert.AreEqual(expressionString, expectedString);
 
             expressionString = ParseExpression<FluentModel>(x => x.BooleanProperty == booleanValue || (x.IntegerProperty > integerValue && x.DoubleProperty < doubleValue));

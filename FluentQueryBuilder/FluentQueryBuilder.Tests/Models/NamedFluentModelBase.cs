@@ -10,9 +10,11 @@ namespace FluentQueryBuilder.Tests.Models
 
         public const string BOOLEAN_PROPERTY_NAME = "boolean";
         public const string DATE_PROPERTY_NAME = "date";
+        public const string STRING_PROPERTY_NAME = "StringProperty";
 
         public static readonly bool BOOLEAN_VALUE = true;
         public static readonly DateTime DATE_VALUE = new DateTime(2017, 1, 1);
+
 
         [FluentProperty(BOOLEAN_PROPERTY_NAME)]
         public bool BooleanProperty { get; set; }
