@@ -58,12 +58,14 @@
     <Compile Include="IConditionResolver.cs" />
     <Compile Include="IConverterResolver.cs" />
     <Compile Include="IExpressionTypeTransformer.cs" />
+    <Compile Include="Linq\FluentList.cs" />
+    <Compile Include="Linq\IFluentList.cs" />
     <Compile Include="NullComparisonResolver.cs" />
     <Compile Include="NullComparisonResolverBase.cs" />
     <Compile Include="IQueryExecutor.cs" />
     <Compile Include="IStringificationRulesResolver.cs" />
-    <Compile Include="Linq\FluentQueriable.cs" />
-    <Compile Include="Linq\IFluentQueriable.cs" />
+    <Compile Include="Linq\FluentQueryable.cs" />
+    <Compile Include="Linq\IFluentQueryable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryExecutor.cs" />
     <Compile Include="Query\IQueryProvider.cs" />

@@ -8,12 +8,12 @@ using Rhino.Mocks;
 namespace FluentQueryBuilder.Tests.Linq
 {
     [TestClass]
-    public class FluentQueriableTests
+    public class FluentQueryableTests
     {
         protected IQueryExecutor _queryExecutor;
         protected IQueryProviderFactory _queryProviderFactory;
         protected IQueryProvider<NamedFluentModelBase> _queryProvider;
-        protected IFluentQueriable<NamedFluentModelBase> _fluentQueriable;
+        protected IFluentQueryable<NamedFluentModelBase> _fluentQueriable;
 
         protected FluentObject _fluentObject;
             

@@ -6,14 +6,14 @@ using FluentQueryBuilder.Query;
 
 namespace FluentQueryBuilder.Linq
 {
-    public abstract class FluentQueriable<T>: IFluentQueriable<T> where T : class, new()
+    public abstract class FluentQueryable<T>: IFluentQueryable<T> where T : class, new()
     {
         protected readonly IQueryProviderFactory _queryProviderFactory;
 
         protected IQueryExecutor _queryExecutor;
         protected IQueryProvider<T> _queryProvider;
 
-        protected FluentQueriable(IQueryExecutor queryExecutor, IQueryProviderFactory queryProviderFactory)
+        protected FluentQueryable(IQueryExecutor queryExecutor, IQueryProviderFactory queryProviderFactory)
         {
             _queryProviderFactory = queryProviderFactory;
 
@@ -21,80 +21,12 @@ namespace FluentQueryBuilder.Linq
             _queryProvider = _queryProviderFactory.Create<T>();
         }
 
-        protected FluentQueriable(IQueryExecutor queryExecutor)
+        protected FluentQueryable(IQueryExecutor queryExecutor)
         {
             _queryProviderFactory = new QueryProviderFactory();
 
             _queryExecutor = queryExecutor;
             _queryProvider = _queryProviderFactory.Create<T>();
-        }
-
-        public virtual T Add(T entity)
-        {
-            var query = _queryProvider.Add(entity);
-            var item = _queryExecutor.ExecuteForSingle(query);
-
-            Reset();
-            return item != null ? item.MapFromFluentObject<T>() : null;
-        }
-
-        public virtual T Update(T entity)
-        {
-            var query = _queryProvider.Update(entity);
-            var item = _queryExecutor.ExecuteForSingle(query);
-
-            Reset();
-            return item != null ? item.MapFromFluentObject<T>() : null;
-        }
-
-        public virtual int Delete(T entity)
-        {
-            var query = _queryProvider.Delete(entity);
-            var number = _queryExecutor.ExecuteForScalar<int>(query);
-
-            Reset();
-            return number;
-        }
-
-        public virtual IEnumerable<T> AddRange(IEnumerable<T> entities)
-        {
-            var query = _queryProvider.AddRange(entities);
-            var items = _queryExecutor.ExecuteForMultiple(query);
-
-            var mappedEntities = new List<T>();
-            foreach (var item in items)
-            {
-                var mappedEntity = item.MapFromFluentObject<T>();
-                mappedEntities.Add(mappedEntity);
-            }
-
-            Reset();
-            return mappedEntities;
-        }
-
-        public virtual IEnumerable<T> UpdateRange(IEnumerable<T> entities)
-        {
-            var query = _queryProvider.UpdateRange(entities);
-            var items = _queryExecutor.ExecuteForMultiple(query);
-
-            var mappedEntities = new List<T>();
-            foreach (var item in items)
-            {
-                var mappedEntity = item.MapFromFluentObject<T>();
-                mappedEntities.Add(mappedEntity);
-            }
-
-            Reset();
-            return mappedEntities;
-        }
-
-        public virtual int DeleteRange(IEnumerable<T> entities)
-        {
-            var query = _queryProvider.DeleteRange(entities);
-            var number = _queryExecutor.ExecuteForScalar<int>(query);
-
-            Reset();
-            return number;
         }
 
         public virtual T FirstOrDefault()
@@ -115,43 +47,43 @@ namespace FluentQueryBuilder.Linq
             return item != null ? item.MapFromFluentObject<T>() : null;
         }
 
-        public virtual IFluentQueriable<T> Take(int number)
+        public virtual IFluentQueryable<T> Take(int number)
         {
             _queryProvider = _queryProvider.Take(number);
             return this;
         }
 
-        public virtual IFluentQueriable<T> Where(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+        public virtual IFluentQueryable<T> Where(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
         {
             _queryProvider = _queryProvider.Where(predicate);
             return this;
         }
 
-        public virtual IFluentQueriable<T> Select<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selctor)
+        public virtual IFluentQueryable<T> Select<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selctor)
         {
             _queryProvider = _queryProvider.Select(selctor);
             return this;
         }
 
-        public virtual IFluentQueriable<T> Select<TOut>() where TOut : class, new()
+        public virtual IFluentQueryable<T> Select<TOut>() where TOut : class, new()
         {
             _queryProvider = _queryProvider.Select<TOut>();
             return this;
         }
 
-        public virtual IFluentQueriable<T> OrderBy<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector)
+        public virtual IFluentQueryable<T> OrderBy<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector)
         {
             _queryProvider = _queryProvider.OrderBy(selector);
             return this;
         }
 
-        public virtual IFluentQueriable<T> OrderByDescending<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector)
+        public virtual IFluentQueryable<T> OrderByDescending<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector)
         {
             _queryProvider = _queryProvider.OrderByDescending(selector);
             return this;
         }
 
-        public virtual IFluentQueriable<T> OrderBy<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector, bool ascending)
+        public virtual IFluentQueryable<T> OrderBy<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector, bool ascending)
         {
             _queryProvider = _queryProvider.OrderBy(selector, ascending);
             return this;

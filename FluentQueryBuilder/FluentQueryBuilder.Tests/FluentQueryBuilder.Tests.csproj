@@ -64,7 +64,7 @@
     <Compile Include="Extensions\MappingExtensonsTests.cs" />
     <Compile Include="Extensions\ExpressionExtensionsTests.cs" />
     <Compile Include="Linq\BasicFluentQueryable.cs" />
-    <Compile Include="Linq\FluentQueriableTests.cs" />
+    <Compile Include="Linq\FluentQueryableTests.cs" />
     <Compile Include="Models\NamedFluentModel.cs" />
     <Compile Include="Models\FluentModel.cs" />
     <Compile Include="Models\NamedFluentModelBase.cs" />
