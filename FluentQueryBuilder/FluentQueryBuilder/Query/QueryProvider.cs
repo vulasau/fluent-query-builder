@@ -12,6 +12,19 @@ namespace FluentQueryBuilder.Query
         protected string _ordering;
         protected string _limit;
 
+        public QueryProvider()
+        {
+
+        }
+
+        protected QueryProvider(string selector, string condition, string ordering, string limit)
+        {
+            _selector = selector;
+            _condition = condition;
+            _ordering = ordering;
+            _limit = limit;
+        }
+
         public virtual string Add(T entity)
         {
             throw new NotImplementedException();
@@ -110,13 +123,13 @@ namespace FluentQueryBuilder.Query
             return this;
         }
 
-        public virtual IQueryProvider<T> Select<TOut>() where TOut : class, new()
+        public virtual IQueryProvider<TOut> Select<TOut>() where TOut : class, new() 
         {
             if (!string.IsNullOrWhiteSpace(_selector))
                 throw new InvalidOperationException("Only one selector per expression is supported.");
 
             _selector = GetSelector<TOut>();
-            return this;
+            return new QueryProvider<TOut>(_selector, _condition, _ordering, _limit);
         }
 
         public virtual IQueryProvider<T> OrderBy<TOut>(Expression<Func<T, TOut>> selector)

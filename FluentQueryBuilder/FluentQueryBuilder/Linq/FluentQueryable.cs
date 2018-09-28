@@ -6,7 +6,7 @@ using FluentQueryBuilder.Query;
 
 namespace FluentQueryBuilder.Linq
 {
-    public abstract class FluentQueryable<T>: IFluentQueryable<T> where T : class, new()
+    public class FluentQueryable<T>: IFluentQueryable<T> where T : class, new()
     {
         protected readonly IQueryProviderFactory _queryProviderFactory;
 
@@ -27,6 +27,14 @@ namespace FluentQueryBuilder.Linq
 
             _queryExecutor = queryExecutor;
             _queryProvider = _queryProviderFactory.Create<T>();
+        }
+
+        protected FluentQueryable(IQueryExecutor queryExecutor, IQueryProvider<T> queryProvider, IQueryProviderFactory queryProviderFactory)
+        {
+            _queryProviderFactory = queryProviderFactory;
+
+            _queryExecutor = queryExecutor;
+            _queryProvider = queryProvider;
         }
 
         public virtual T FirstOrDefault()
@@ -65,10 +73,15 @@ namespace FluentQueryBuilder.Linq
             return this;
         }
 
-        public virtual IFluentQueryable<T> Select<TOut>() where TOut : class, new()
+        public virtual IFluentQueryable<TOut> Select<TOut>() where TOut : class, new()
         {
-            _queryProvider = _queryProvider.Select<TOut>();
-            return this;
+            Reset();
+
+            var queryExecutor = _queryExecutor;
+            var queryProvider = _queryProvider.Select<TOut>();
+            var queryProviderFactory = _queryProviderFactory;
+
+            return new FluentQueryable<TOut>(queryExecutor, queryProvider, queryProviderFactory);
         }
 
         public virtual IFluentQueryable<T> OrderBy<TOut>(System.Linq.Expressions.Expression<Func<T, TOut>> selector)
