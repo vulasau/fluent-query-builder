@@ -63,6 +63,7 @@ namespace FluentQueryBuilder.Tests.Extensions
             var doubleValue = 50.55;
             var integerValue = 70;
             object nullable = null;
+            var arrayValues = new int[] { 1 };
 
             // Named attributes
             var expressionString = ParseExpression<NamedFluentModel>(x => x.BooleanProperty == trueValue);
@@ -85,6 +86,10 @@ namespace FluentQueryBuilder.Tests.Extensions
             expectedString = string.Format("{0} != NULL", NamedFluentModel.OBJECT_PROPERTY_NAME);
             Assert.AreEqual(expressionString, expectedString);
 
+            expressionString = ParseExpression<NamedFluentModel>(x => x.IntegerProperty == arrayValues[0]);
+            expectedString = string.Format("{0} = (1)", NamedFluentModel.INTEGER_PROPERTY_NAME, arrayValues[0]);
+            Assert.AreEqual(expressionString, expectedString);
+
 
             // Unnamed attributes
             expressionString = ParseExpression<FluentModel>(x => x.BooleanProperty == trueValue);
@@ -105,6 +110,10 @@ namespace FluentQueryBuilder.Tests.Extensions
 
             expressionString = ParseExpression<FluentModel>(x => x.ObjectProperty != nullable);
             expectedString = string.Format("{0} != NULL", FluentModel.OBJECT_PROPERTY_NAME);
+            Assert.AreEqual(expressionString, expectedString);
+
+            expressionString = ParseExpression<FluentModel>(x => x.IntegerProperty == arrayValues[0]);
+            expectedString = string.Format("{0} = (1)", FluentModel.INTEGER_PROPERTY_NAME, arrayValues[0]);
             Assert.AreEqual(expressionString, expectedString);
         }
 
@@ -233,11 +242,11 @@ namespace FluentQueryBuilder.Tests.Extensions
             actions.IntegerProperty = 10;
 
             var expressionString = ParseExpression<NamedFluentModel>(x => x.IntegerProperty == 10 + actions.IntegerProperty);
-            var expectedString = string.Format("{0} = (10 + 10)", NamedFluentModel.INTEGER_PROPERTY_NAME);
+            var expectedString = string.Format("{0} = (20)", NamedFluentModel.INTEGER_PROPERTY_NAME);
             Assert.AreEqual(expressionString, expectedString);
 
             expressionString = ParseExpression<NamedFluentModel>(x => x.IntegerProperty >= 10 + actions.IntegerProperty && x.DoubleProperty <= actions.GetValue(3));
-            expectedString = string.Format("({0} >= (10 + 10)) AND ({1} <= 30)", NamedFluentModel.INTEGER_PROPERTY_NAME, NamedFluentModel.DOUBLE_PROPERTY_NAME);
+            expectedString = string.Format("({0} >= (20)) AND ({1} <= 30)", NamedFluentModel.INTEGER_PROPERTY_NAME, NamedFluentModel.DOUBLE_PROPERTY_NAME);
             Assert.AreEqual(expressionString, expectedString);
         }
 

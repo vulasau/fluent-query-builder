@@ -79,6 +79,16 @@ namespace FluentQueryBuilder.Extensions
 
         private static string Process<T>(this BinaryExpression binaryExpression)
         {
+            try
+            {
+                // Trying to evaluate
+                return CompileExpression(binaryExpression);
+            }
+            catch
+            {
+                // Ignoring if not evaluatable and parsing
+            }
+
             var left = ParseExpression<T>(binaryExpression.Left);
             if (binaryExpression.Left is BinaryExpression)
                 left = left.WrapWithBrackets();
