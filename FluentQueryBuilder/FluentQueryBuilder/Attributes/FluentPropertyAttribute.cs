@@ -23,6 +23,14 @@ namespace FluentQueryBuilder.Attributes
         public string Condition { get; private set; }
 
         /// <summary>
+        /// Value indicating if the condition logic should be inversed in mapping process.
+        /// If property is set to 'true' and condition is resolved as 'true', property will not be mapped.
+        /// Same logic vise versa.
+        /// Parameter is 'false' by default.
+        /// </summary>
+        public bool ReverseCondition { get; private set; }
+
+        /// <summary>
         /// Type of converter which is used for mapping process.
         /// If set, conerter of this type will be used for property value mapping during serialization/deserialization process.
         /// If not set, one of default converters will be used, based on the property type.
@@ -30,7 +38,14 @@ namespace FluentQueryBuilder.Attributes
         /// </summary>
         public Type Converter { get; private set; }
 
-        public FluentPropertyAttribute(string name = null, string condition = null, Type converter = null)
+        /// <summary>
+        /// Indicates, whether property is readonly.
+        /// If value is 'true', property will be mapped only 'from' Fluentobject, but will be ignored when mapping 'to' FluentObject.
+        /// Paramter is 'false' by default.
+        /// </summary>
+        public bool IsReadony { get; private set; }
+
+        public FluentPropertyAttribute(string name = null, string condition = null, bool reverseCondition = false, Type converter = null, bool isReadonly = false)
         {
             if (name != null && name == string.Empty)
                 throw new ArgumentException("Parameter 'name' can not be empty string.", "name");
@@ -43,7 +58,9 @@ namespace FluentQueryBuilder.Attributes
 
             Name = name;
             Condition = condition;
+            ReverseCondition = reverseCondition;
             Converter = converter;
+            IsReadony = isReadonly;
         }
     }
 }

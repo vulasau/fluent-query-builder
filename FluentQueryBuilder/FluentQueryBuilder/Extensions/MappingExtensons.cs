@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentQueryBuilder.Attributes;
 using FluentQueryBuilder.Configuration;
@@ -38,7 +37,10 @@ namespace FluentQueryBuilder.Extensions
                 if (fluentPropertyAttribute == null)
                     continue;
 
-                var condition = ValidateCondition(fluentPropertyAttribute.Condition);
+                if (fluentPropertyAttribute.IsReadony)
+                    continue;
+
+                var condition = ValidateCondition(fluentPropertyAttribute.Condition, fluentPropertyAttribute.ReverseCondition);
                 if (!condition)
                     continue;
 
@@ -71,7 +73,7 @@ namespace FluentQueryBuilder.Extensions
                 if (fluentPropertyAttribute == null)
                     continue;
 
-                var condition = ValidateCondition(fluentPropertyAttribute.Condition);
+                var condition = ValidateCondition(fluentPropertyAttribute.Condition, fluentPropertyAttribute.ReverseCondition);
                 if (!condition)
                     continue;
 
@@ -96,7 +98,7 @@ namespace FluentQueryBuilder.Extensions
             return _converterResolver.Resolve(returnType);
         }
 
-        private static bool ValidateCondition(string conditionName)
+        private static bool ValidateCondition(string conditionName, bool reverse = false)
         {
             if (string.IsNullOrWhiteSpace(conditionName))
                 return true;
@@ -104,7 +106,7 @@ namespace FluentQueryBuilder.Extensions
             if (_conditionResolver == null)
                 return true;
 
-            return _conditionResolver.IsValid(conditionName);
+            return _conditionResolver.IsValid(conditionName, reverse);
         }
     }
 }

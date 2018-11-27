@@ -24,8 +24,16 @@ namespace FluentQueryBuilder.Tests.Models
 
         public NamedFluentModelBase()
         {
-            BooleanProperty = BOOLEAN_VALUE;
-            DateProperty = DATE_VALUE;
+
+        }
+
+        public NamedFluentModelBase(bool withValues)
+        {
+            if (withValues)
+            {
+                BooleanProperty = BOOLEAN_VALUE;
+                DateProperty = DATE_VALUE;
+            }
         }
     }
 }

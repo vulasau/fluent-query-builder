@@ -120,7 +120,7 @@ namespace FluentQueryBuilder.Tests.Extensions
         [TestMethod]
         public void ParseMemberAccessComparisonExpression()
         {
-            var model = new FluentModel();
+            var model = new FluentModel(true);
 
             // Named atributes
             var expressionString = ParseExpression<NamedFluentModel>(x => x.BooleanProperty == model.BooleanProperty);

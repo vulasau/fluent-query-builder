@@ -2,9 +2,9 @@
 {
     public abstract class ConditionResolver: IConditionResolver
     {
-        public virtual bool IsValid(string conditionName)
+        public virtual bool IsValid(string conditionName, bool reverse = false)
         {
-            return true;
+            return reverse ? false : true;
         }
     }
 }

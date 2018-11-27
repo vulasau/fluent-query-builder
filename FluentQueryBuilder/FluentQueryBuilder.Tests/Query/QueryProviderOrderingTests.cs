@@ -9,7 +9,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildAscendingOrderingQuery()
         {
             var query = _queryProvider.OrderBy(x => x.IntegerProperty).ToArray();
-            var expectedString = "SELECT boolean, date, double, integer, object FROM model \r\nORDER BY integer ASC NULLS LAST \r\n";
+            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\nORDER BY integer ASC NULLS LAST \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
@@ -17,7 +17,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildDescendingOrderingQuery()
         {
             var query = _queryProvider.OrderByDescending(x => x.IntegerProperty).ToArray();
-            var expectedString = "SELECT boolean, date, double, integer, object FROM model \r\nORDER BY integer DESC NULLS LAST \r\n";
+            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\nORDER BY integer DESC NULLS LAST \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
@@ -25,7 +25,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildConditionalAscendingOrderingQuery()
         {
             var query = _queryProvider.Where(x => x.BooleanProperty == true).OrderBy(x => x.IntegerProperty).ToArray();
-            var expectedString = "SELECT boolean, date, double, integer, object FROM model \r\nWHERE (boolean = True) \r\nORDER BY integer ASC NULLS LAST \r\n";
+            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\nWHERE (boolean = True) \r\nORDER BY integer ASC NULLS LAST \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
@@ -33,7 +33,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildDescendingConditionalOrderingQuery()
         {
             var query = _queryProvider.Where(x => x.BooleanProperty == true).OrderByDescending(x => x.IntegerProperty).ToArray();
-            var expectedString = "SELECT boolean, date, double, integer, object FROM model \r\nWHERE (boolean = True) \r\nORDER BY integer DESC NULLS LAST \r\n";
+            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\nWHERE (boolean = True) \r\nORDER BY integer DESC NULLS LAST \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
