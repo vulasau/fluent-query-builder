@@ -41,7 +41,7 @@ namespace FluentQueryBuilder.Query
                 if (fluentPropertyAttribute == null)
                     continue;
 
-                if(!ResolveCondition(fluentPropertyAttribute.Condition))
+                if(!ResolveCondition(fluentPropertyAttribute.Condition, fluentPropertyAttribute.ReverseCondition))
                     continue;
 
                 var key = fluentPropertyAttribute.Name ?? prop.Name;
@@ -51,12 +51,12 @@ namespace FluentQueryBuilder.Query
             return propertyNames;
         }
 
-        private static bool ResolveCondition(string conditionName)
+        private static bool ResolveCondition(string conditionName, bool reverse = false)
         {
             if (string.IsNullOrWhiteSpace(conditionName))
                 return true;
 
-            return ConditionResolver.IsValid(conditionName);
+            return ConditionResolver.IsValid(conditionName, reverse);
         }
     }
 }

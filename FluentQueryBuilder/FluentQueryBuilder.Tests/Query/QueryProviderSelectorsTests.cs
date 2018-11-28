@@ -11,7 +11,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildGetAllQuery()
         {
             var query = _queryProvider.ToArray();
-            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\n";
+            var expectedString = "SELECT boolean, conditioned, date, double, integer, object, readonly FROM model \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
@@ -19,7 +19,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildGetAllConditionalQuery()
         {
             var query = _queryProvider.Where(x => x.BooleanProperty == true || (x.IntegerProperty > 10 && x.DoubleProperty < 20.5)).ToArray();
-            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\nWHERE ((boolean = True) OR ((integer > 10) AND (double < 20.5))) \r\n";
+            var expectedString = "SELECT boolean, conditioned, date, double, integer, object, readonly FROM model \r\nWHERE ((boolean = True) OR ((integer > 10) AND (double < 20.5))) \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
@@ -27,7 +27,7 @@ namespace FluentQueryBuilder.Tests.Query
         public void ShouldBuildGetAllMultiConditionalQuery()
         {
             var query = _queryProvider.Where(x => x.BooleanProperty == true).Where(x => x.IntegerProperty > 10 && x.DateProperty == new DateTime(2018, 1, 1)).ToArray();
-            var expectedString = "SELECT boolean, conditioned, conditioned_reverse, date, double, integer, object, readonly FROM model \r\nWHERE (boolean = True)  AND ((integer > 10) AND (date = '1/1/2018 12:00:00 AM')) \r\n";
+            var expectedString = "SELECT boolean, conditioned, date, double, integer, object, readonly FROM model \r\nWHERE (boolean = True)  AND ((integer > 10) AND (date = '1/1/2018 12:00:00 AM')) \r\n";
             Assert.AreEqual(expectedString, query);
         }
 
