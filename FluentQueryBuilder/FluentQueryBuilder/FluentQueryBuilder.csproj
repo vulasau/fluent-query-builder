@@ -54,6 +54,7 @@
     <Compile Include="ExpressionTypeTransformer.cs" />
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Extensions\MappingExtensons.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="FluentObject.cs" />
     <Compile Include="IConditionResolver.cs" />
     <Compile Include="IConverterResolver.cs" />
