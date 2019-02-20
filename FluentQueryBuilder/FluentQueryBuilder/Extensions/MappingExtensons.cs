@@ -47,7 +47,7 @@ namespace FluentQueryBuilder.Extensions
 
             foreach (var prop in props)
             {
-                var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
+                var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), true).SingleOrDefault() as FluentPropertyAttribute;
                 if (fluentPropertyAttribute == null)
                     continue;
 
