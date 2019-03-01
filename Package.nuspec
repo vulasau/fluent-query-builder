@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>FluentQueryBuilder</id>
-    <version>1.0.13</version>
+    <version>1.0.14</version>
     <authors>UlasauV</authors>
     <owners>UlasauV</owners>
 	<licenseUrl>https://github.com/vulasau/fluent-query-builder/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/vulasau/fluent-query-builder</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An extensions for fluent mapping of object properties to dynamic entity and building string queries based on this properties parsing expression trees.</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>Do not use 1.0.13 version of package as IgnoreOnNull parameter of FluentPropertyAttribute has been removed.</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>FluentQueryBuilder Fluent QueryBuilder ExpressionParser</tags>
   </metadata>

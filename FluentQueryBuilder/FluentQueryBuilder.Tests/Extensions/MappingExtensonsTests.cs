@@ -60,7 +60,6 @@ namespace FluentQueryBuilder.Tests.Extensions
             Assert.IsFalse(fluentObject.ContainsKey(FluentModel.READONLY_PROPERTY_NAME));
             Assert.IsTrue(fluentObject.ContainsKey(FluentModel.CONDITIONED_PROPERTY_NAME));
             Assert.IsFalse(fluentObject.ContainsKey(FluentModel.CONDITIONED_REVERSE_PROPERTY_NAME));
-            Assert.IsFalse(fluentObject.ContainsKey(FluentModel.NULL_PROPERTY_NAME));
 
             Assert.AreEqual(fluentObject[FluentModel.BOOLEAN_PROPERTY_NAME], FluentModel.BOOLEAN_VALUE.ToString());
             Assert.AreEqual(fluentObject[FluentModel.DATE_PROPERTY_NAME], FluentModel.DATE_VALUE.ToString());

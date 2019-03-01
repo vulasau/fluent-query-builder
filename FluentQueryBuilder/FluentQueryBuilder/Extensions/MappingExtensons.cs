@@ -60,10 +60,6 @@ namespace FluentQueryBuilder.Extensions
 
                 var key = fluentPropertyAttribute.Name ?? prop.Name;
                 var value = prop.GetValue(source);
-
-                if (fluentPropertyAttribute.IgnoreOnNull && value == null)
-                    continue;
-
                 var converter = GetConverter(fluentPropertyAttribute.Converter, prop.PropertyType);
                 var valueString = converter != null ? converter.ConvertBack(value) : value.ToString();
 
