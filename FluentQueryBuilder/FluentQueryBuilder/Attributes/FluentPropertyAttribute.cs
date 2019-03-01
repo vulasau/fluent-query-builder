@@ -45,7 +45,15 @@ namespace FluentQueryBuilder.Attributes
         /// </summary>
         public bool IsReadony { get; private set; }
 
-        public FluentPropertyAttribute(string name = null, string condition = null, bool reverseCondition = false, Type converter = null, bool isReadonly = false)
+        /// <summary>
+        /// Indicates, weather property should be ingored during mapping process, it it's value is null.
+        /// If value is 'true' and property value is null, property will not be mapped, otherwise mapped.
+        /// If value is false, property will always be mapped.
+        /// Parameter is falce by default.
+        /// </summary>
+        public bool IgnoreOnNull { get; private set; }
+
+        public FluentPropertyAttribute(string name = null, string condition = null, bool reverseCondition = false, Type converter = null, bool isReadonly = false, bool ignoreOnNull = false)
         {
             if (name != null && name == string.Empty)
                 throw new ArgumentException("Parameter 'name' can not be empty string.", "name");
@@ -61,6 +69,7 @@ namespace FluentQueryBuilder.Attributes
             ReverseCondition = reverseCondition;
             Converter = converter;
             IsReadony = isReadonly;
+            IgnoreOnNull = ignoreOnNull;
         }
     }
 }

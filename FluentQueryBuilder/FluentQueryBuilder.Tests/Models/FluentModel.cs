@@ -15,6 +15,7 @@ namespace FluentQueryBuilder.Tests.Models
         public const string READONLY_PROPERTY_NAME = "ReadonlyProperty";
         public const string CONDITIONED_PROPERTY_NAME = "ConditionedProperty";
         public const string CONDITIONED_REVERSE_PROPERTY_NAME = "ConditionedReverseProperty";
+        public const string NULL_PROPERTY_NAME = "NullProperty";
 
         public static readonly bool BOOLEAN_VALUE = true;
         public static readonly DateTime DATE_VALUE = new DateTime(2017, 1, 1);
@@ -24,6 +25,7 @@ namespace FluentQueryBuilder.Tests.Models
         public static readonly string READONLY_VALUE = "readonly";
         public static readonly string CONDITIONED_VALUE = "conditioned";
         public static readonly string CONDITIONED_REVERSE_VALUE = "conditioned reverse";
+        public static readonly string NULL_VALUE = null;
 
         [FluentProperty]
         public bool BooleanProperty { get; set; }
@@ -49,6 +51,9 @@ namespace FluentQueryBuilder.Tests.Models
         [FluentProperty(condition: "Hola", reverseCondition: true)]
         public string ConditionedReverseProperty { get; set; }
 
+        [FluentProperty(ignoreOnNull: true)]
+        public string NullProperty { get; set; }
+
         public FluentModel()
         {
 
@@ -66,6 +71,7 @@ namespace FluentQueryBuilder.Tests.Models
                 ReadonlyProperty = READONLY_VALUE;
                 ConditionedProperty = CONDITIONED_VALUE;
                 ConditionedReverseProperty = CONDITIONED_REVERSE_VALUE;
+                NullProperty = NULL_VALUE;
             }
         }
     }
