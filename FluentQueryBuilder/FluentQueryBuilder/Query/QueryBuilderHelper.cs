@@ -9,11 +9,11 @@ namespace FluentQueryBuilder.Query
 {
     public static class QueryBuilderHelper
     {
-        public static IConditionResolver ConditionResolver { get; private set; }
+        private static IConditionResolver _conditionResolver;
 
         static QueryBuilderHelper()
         {
-            ConditionResolver = ObjectMapperConfiguration.ConditionResolver;
+            _conditionResolver = ObjectMapperConfiguration.ConditionResolver;
         }
 
         public static string GetFluentEntityName<T>() where T : class, new()
@@ -61,11 +61,12 @@ namespace FluentQueryBuilder.Query
             foreach (var prop in props)
             {
                 var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
-
                 if (fluentPropertyAttribute == null)
                     continue;
 
-                if (!ResolveCondition(fluentPropertyAttribute.Condition, fluentPropertyAttribute.ReverseCondition))
+                var conditionAttribute = prop.GetCustomAttributes(typeof(ConditionAttribute), false).SingleOrDefault() as ConditionAttribute;
+                var condition = conditionAttribute == null ? true : ValidateCondition(conditionAttribute.Name, conditionAttribute.Reverse);
+                if (!condition)
                     continue;
 
                 var key = fluentPropertyAttribute.Name ?? prop.Name;
@@ -75,12 +76,15 @@ namespace FluentQueryBuilder.Query
             return propertyNames;
         }
 
-        private static bool ResolveCondition(string conditionName, bool reverse = false)
+        private static bool ValidateCondition(string conditionName, bool reverse)
         {
             if (string.IsNullOrWhiteSpace(conditionName))
                 return true;
 
-            return ConditionResolver.IsValid(conditionName, reverse);
+            if (_conditionResolver == null)
+                return true;
+
+            return _conditionResolver.IsValid(conditionName, reverse);
         }
     }
 }

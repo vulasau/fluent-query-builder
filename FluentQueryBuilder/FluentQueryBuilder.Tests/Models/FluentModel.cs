@@ -43,10 +43,12 @@ namespace FluentQueryBuilder.Tests.Models
         [FluentProperty(isReadonly: true)]
         public string ReadonlyProperty { get; set; }
 
-        [FluentProperty(condition: "Hola")]
+        [FluentProperty]
+        [Condition("Hola")]
         public string ConditionedProperty { get; set; }
 
-        [FluentProperty(condition: "Hola", reverseCondition: true)]
+        [FluentProperty]
+        [Condition("Hola", true)]
         public string ConditionedReverseProperty { get; set; }
 
         public FluentModel()

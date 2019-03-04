@@ -68,6 +68,9 @@
     <Compile Include="Models\NamedFluentModel.cs" />
     <Compile Include="Models\FluentModel.cs" />
     <Compile Include="Models\NamedFluentModelBase.cs" />
+    <Compile Include="Models\NestedModel.cs" />
+    <Compile Include="Models\NestedModelBase.cs" />
+    <Compile Include="Models\NestedModelFields.cs" />
     <Compile Include="Query\QueryProviderSelectorsTests.cs" />
     <Compile Include="Query\QueryProviderLimitsTests.cs" />
     <Compile Include="Query\QueryProviderTests.cs" />

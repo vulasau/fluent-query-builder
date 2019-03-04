@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using FluentQueryBuilder.Attributes;
 using FluentQueryBuilder.Configuration;
 using FluentQueryBuilder.Converters;
@@ -54,8 +55,14 @@ namespace FluentQueryBuilder.Extensions
                 if (fluentPropertyAttribute.IsReadony)
                     continue;
 
-                var condition = ValidateCondition(fluentPropertyAttribute.Condition, fluentPropertyAttribute.ReverseCondition);
+                var conditionAttribute = prop.GetCustomAttributes(typeof(ConditionAttribute), false).SingleOrDefault() as ConditionAttribute;
+                var condition = conditionAttribute == null ? true : ValidateCondition(conditionAttribute.Name, conditionAttribute.Reverse);
                 if (!condition)
+                    continue;
+
+                var dependencyAttribute = prop.GetCustomAttributes(typeof(DependencyAttribute), false).SingleOrDefault() as DependencyAttribute;
+                var dependency = dependencyAttribute == null ? true : ValidateDependency(dependencyAttribute.PropertyName, dependencyAttribute.Reverse, source, props);
+                if (!dependency)
                     continue;
 
                 var key = fluentPropertyAttribute.Name ?? prop.Name;
@@ -99,7 +106,8 @@ namespace FluentQueryBuilder.Extensions
                 if (fluentPropertyAttribute == null)
                     continue;
 
-                var condition = ValidateCondition(fluentPropertyAttribute.Condition, fluentPropertyAttribute.ReverseCondition);
+                var conditionAttribute = prop.GetCustomAttributes(typeof(ConditionAttribute), false).SingleOrDefault() as ConditionAttribute;
+                var condition = conditionAttribute == null ? true : ValidateCondition(conditionAttribute.Name, conditionAttribute.Reverse);
                 if (!condition)
                     continue;
 
@@ -124,7 +132,7 @@ namespace FluentQueryBuilder.Extensions
             return _converterResolver.Resolve(returnType);
         }
 
-        private static bool ValidateCondition(string conditionName, bool reverse = false)
+        private static bool ValidateCondition(string conditionName, bool reverse)
         {
             if (string.IsNullOrWhiteSpace(conditionName))
                 return true;
@@ -133,6 +141,25 @@ namespace FluentQueryBuilder.Extensions
                 return true;
 
             return _conditionResolver.IsValid(conditionName, reverse);
+        }
+
+        private static bool ValidateDependency(string propertyName, bool reverse, object source, PropertyInfo[] properties)
+        {
+            var property = properties.FirstOrDefault(prop => string.Equals(prop.Name, propertyName));
+
+            if (property == null)
+                throw new ArgumentException(string.Format("Dependent property '{0}' was not found among class public properties.", propertyName), "dependentPropertyName");
+
+            if (property.PropertyType != typeof(bool))
+                throw new ArgumentException(string.Format("Dependent property '{0}' should be of type 'Boolean'", propertyName), "dependentPropertyName");
+
+            var fluentPropertyAttribute = property.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
+            if (fluentPropertyAttribute != null)
+                throw new InvalidOperationException("Dependent property can not point to a FluentProperty.");
+
+            var propertyValue = (bool)property.GetValue(source);
+
+            return reverse ? !propertyValue : propertyValue;
         }
     }
 }

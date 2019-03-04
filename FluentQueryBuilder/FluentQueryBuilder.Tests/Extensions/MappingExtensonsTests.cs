@@ -122,5 +122,49 @@ namespace FluentQueryBuilder.Tests.Extensions
             Assert.AreEqual(fluentModel.ConditionedProperty, FluentModel.CONDITIONED_VALUE);
             Assert.AreNotEqual(fluentModel.ConditionedReverseProperty, FluentModel.CONDITIONED_REVERSE_VALUE);
         }
+
+        [TestMethod]
+        public void ShouldMapFromNestedModelToFluentObject()
+        {
+            var nestedModel = new NestedModel(false);
+
+            var fluentObject = nestedModel.MapToFluentObject();
+
+            Assert.IsNotNull(fluentObject);
+            Assert.AreEqual(fluentObject.Name, NestedModelFields.MODEL_NAME);
+
+            Assert.IsTrue(fluentObject.ContainsKey(NestedModelFields.FIELD_NAME));
+            Assert.IsTrue(fluentObject.ContainsKey(NestedModelFields.CONDITIONAL_FIELD_NAME));
+            Assert.IsFalse(fluentObject.ContainsKey(NestedModelFields.CONDITIONAL_REVERSED_FIELD_NAME));
+            Assert.IsFalse(fluentObject.ContainsKey(NestedModelFields.READONLY_FIELD_NAME));
+            Assert.IsTrue(fluentObject.ContainsKey(NestedModelFields.DEPENDENT_FIELD_NAME));
+            Assert.IsFalse(fluentObject.ContainsKey(NestedModelFields.DEPENDENT_REVERSED_FIELD_NAME));
+
+            Assert.AreEqual(fluentObject[NestedModelFields.FIELD_NAME], NestedModelFields.FIELD_VALUE);
+            Assert.AreEqual(fluentObject[NestedModelFields.CONDITIONAL_FIELD_NAME], NestedModelFields.CONDITIONAL_FIELD_VALUE.ToString());
+            Assert.AreEqual(fluentObject[NestedModelFields.DEPENDENT_FIELD_NAME], NestedModelFields.DEPENDENT_FIELD_VALUE.ToString());
+        }
+
+        [TestMethod]
+        public void ShouldMapFromFluentObjectToNestedModel()
+        {
+            var fluentObject = new FluentObject(NestedModelFields.MODEL_NAME);
+            fluentObject.Add(NestedModelFields.FIELD_NAME, NestedModelFields.FIELD_VALUE.ToString());
+            fluentObject.Add(NestedModelFields.CONDITIONAL_FIELD_NAME, NestedModelFields.CONDITIONAL_FIELD_VALUE.ToString());
+            fluentObject.Add(NestedModelFields.CONDITIONAL_REVERSED_FIELD_NAME, NestedModelFields.CONDITIONAL_REVERSED_FIELD_VALUE.ToString());
+            fluentObject.Add(NestedModelFields.READONLY_FIELD_NAME, NestedModelFields.READONLY_FIELD_VALUE.ToString());
+            fluentObject.Add(NestedModelFields.DEPENDENT_FIELD_NAME, NestedModelFields.DEPENDENT_FIELD_VALUE.ToString());
+            fluentObject.Add(NestedModelFields.DEPENDENT_REVERSED_FIELD_NAME, NestedModelFields.DEPENDENT_REVERSED_FIELD_VALUE.ToString());
+
+            var nestedModel = fluentObject.MapFromFluentObject<NestedModel>();
+
+            Assert.IsNotNull(nestedModel);
+            Assert.AreEqual(nestedModel.StringProperty, NestedModelFields.FIELD_VALUE);
+            Assert.AreEqual(nestedModel.ConditionalProperty, NestedModelFields.CONDITIONAL_FIELD_VALUE);
+            Assert.AreEqual(nestedModel.ConditionalReversedProperty, 0);
+            Assert.AreEqual(nestedModel.ReadonlyProperty, NestedModelFields.READONLY_FIELD_VALUE);
+            Assert.AreEqual(nestedModel.DependentProperty, NestedModelFields.DEPENDENT_FIELD_VALUE);
+            Assert.AreEqual(nestedModel.DependentReversedProperty, NestedModelFields.DEPENDENT_REVERSED_FIELD_VALUE);
+        }
     }
 }

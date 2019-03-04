@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace FluentQueryBuilder.Linq
@@ -17,5 +18,9 @@ namespace FluentQueryBuilder.Linq
         int Count();
         int Count(Expression<Func<T, bool>> predicate);
         T[] ToArray();
+
+
+        T ExecuteForSingle(string query);
+        IEnumerable<T> ExecuteForMultiple(string query);
     }
 }

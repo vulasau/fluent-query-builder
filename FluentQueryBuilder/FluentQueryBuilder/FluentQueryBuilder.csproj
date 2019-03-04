@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ConditionAttribute.cs" />
+    <Compile Include="Attributes\DependencyAttribute.cs" />
     <Compile Include="Attributes\FluentEntityAttribute.cs" />
     <Compile Include="Attributes\FluentPropertyAttribute.cs" />
     <Compile Include="ConditionResolver.cs" />
