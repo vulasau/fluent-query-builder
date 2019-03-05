@@ -13,7 +13,7 @@ namespace FluentQueryBuilder.Tests.Linq
         protected IQueryExecutor _queryExecutor;
         protected IQueryProviderFactory _queryProviderFactory;
         protected IQueryProvider<NamedFluentModelBase> _queryProvider;
-        protected IFluentQueryable<NamedFluentModelBase> _fluentQueriable;
+        protected IFluentList<NamedFluentModelBase> _fluentQueriable;
 
         protected FluentObject _fluentObject;
             

@@ -81,5 +81,25 @@ namespace FluentQueryBuilder.Linq
             Reset();
             return number;
         }
+
+        public virtual T ExecuteForSingle(string query)
+        {
+            var item = _queryExecutor.ExecuteForSingle(query);
+            return item != null ? item.MapFromFluentObject<T>() : null;
+        }
+
+        public virtual IEnumerable<T> ExecuteForMultiple(string query)
+        {
+            var items = _queryExecutor.ExecuteForMultiple(query);
+
+            var entities = new List<T>();
+            foreach (var item in items)
+            {
+                var entity = item.MapFromFluentObject<T>();
+                entities.Add(entity);
+            }
+
+            return entities;
+        }
     }
 }

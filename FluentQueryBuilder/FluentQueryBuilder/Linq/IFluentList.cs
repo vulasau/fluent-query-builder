@@ -10,5 +10,8 @@ namespace FluentQueryBuilder.Linq
         IEnumerable<T> AddRange(IEnumerable<T> entities);
         IEnumerable<T> UpdateRange(IEnumerable<T> entities);
         int DeleteRange(IEnumerable<T> entities);
+
+        T ExecuteForSingle(string query);
+        IEnumerable<T> ExecuteForMultiple(string query);
     }
 }
