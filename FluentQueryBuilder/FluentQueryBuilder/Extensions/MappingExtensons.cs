@@ -67,10 +67,14 @@ namespace FluentQueryBuilder.Extensions
                 if (!dependency)
                     continue;
 
+                var converterAttribute = prop.GetCustomAttributes(typeof(ConverterAttribute), false).SingleOrDefault() as ConverterAttribute;
+                var converterType = converterAttribute == null ? null : converterAttribute.Type;
+                var converterParameters = converterAttribute == null ? new object[0] : converterAttribute.Parameters;
+                var converter = GetConverter(converterType, prop.PropertyType);
+
                 var key = fluentPropertyAttribute.Name ?? prop.Name;
                 var value = prop.GetValue(source);
-                var converter = GetConverter(fluentPropertyAttribute.Converter, prop.PropertyType);
-                var valueString = converter != null ? converter.ConvertBack(value) : value.ToString();
+                var valueString = converter != null ? converter.ConvertBack(value, converterParameters) : value.ToString();
 
                 fluentObject.Add(key, valueString);
             }
@@ -113,12 +117,16 @@ namespace FluentQueryBuilder.Extensions
                 if (!condition)
                     continue;
 
+                var converterAttribute = prop.GetCustomAttributes(typeof(ConverterAttribute), false).SingleOrDefault() as ConverterAttribute;
+                var converterType = converterAttribute == null ? null : converterAttribute.Type;
+                var converterParameters = converterAttribute == null ? new object[0] : converterAttribute.Parameters;
+                var converter = GetConverter(converterType, prop.PropertyType);
+
                 var key = fluentPropertyAttribute.Name ?? prop.Name;
                 if (source.ContainsKey(key))
                 {
                     var valueString = source[key];
-                    var converter = GetConverter(fluentPropertyAttribute.Converter, prop.PropertyType);
-                    var value = converter != null ? converter.Convert(valueString) : prop.PropertyType.DefaultValue();
+                    var value = converter != null ? converter.Convert(valueString, converterParameters) : prop.PropertyType.DefaultValue();
                     prop.SetValue(entity, value);
                 }
             }
