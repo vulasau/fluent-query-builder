@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using FluentQueryBuilder.Converters;
 
 namespace FluentQueryBuilder.Attributes
 {
@@ -21,13 +19,10 @@ namespace FluentQueryBuilder.Attributes
         /// </summary>
         public bool IsReadony { get; private set; }
 
-        public FluentPropertyAttribute(string name = null, Type converter = null, bool isReadonly = false)
+        public FluentPropertyAttribute(string name = null, bool isReadonly = false)
         {
             if (name != null && string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Parameter 'name' can not be empty string.", "name");
-
-            if (converter != null && !converter.GetInterfaces().Contains(typeof(IPropertyConverter)))
-                throw new ArgumentException("Converter should should implement 'IPropertyConverter' interface", "converter");
 
             Name = name;
             IsReadony = isReadonly;
