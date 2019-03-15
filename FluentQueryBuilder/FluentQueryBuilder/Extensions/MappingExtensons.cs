@@ -11,11 +11,13 @@ namespace FluentQueryBuilder.Extensions
     {
         private static readonly IConditionResolver _conditionResolver;
         private static readonly IConverterResolver _converterResolver;
+        private static readonly IConverterFactory _converterFactory;
 
         static MappingExtensons()
         {
             _conditionResolver = ObjectMapperConfiguration.ConditionResolver;
             _converterResolver = ObjectMapperConfiguration.ConverterResolver;
+            _converterFactory = ObjectMapperConfiguration.ConverterFactory;
         }
 
         public static FluentObject MapToFluentObject<T>(this T source) where T : class, new()
@@ -126,8 +128,8 @@ namespace FluentQueryBuilder.Extensions
 
         private static IPropertyConverter GetConverter(Type converterType, Type returnType)
         {
-            if(converterType != null)
-                return (IPropertyConverter)Activator.CreateInstance(converterType);
+            if (converterType != null)
+                return _converterFactory.CreateConverter(converterType);
 
             return _converterResolver.Resolve(returnType);
         }
