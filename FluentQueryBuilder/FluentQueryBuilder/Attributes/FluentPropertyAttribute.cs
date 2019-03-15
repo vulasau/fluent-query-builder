@@ -21,7 +21,7 @@ namespace FluentQueryBuilder.Attributes
         /// </summary>
         public bool IsReadony { get; private set; }
 
-        public FluentPropertyAttribute(string name = null, Type converter = null, object[] converterParameters = null, bool isReadonly = false)
+        public FluentPropertyAttribute(string name = null, Type converter = null, bool isReadonly = false)
         {
             if (name != null && string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Parameter 'name' can not be empty string.", "name");
