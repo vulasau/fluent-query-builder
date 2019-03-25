@@ -56,8 +56,12 @@
     <Compile Include="Converters\IPropertyConverter.cs" />
     <Compile Include="Converters\ObjectConverter.cs" />
     <Compile Include="ExpressionTypeTransformer.cs" />
+    <Compile Include="Extensions\ConditionExtensions.cs" />
+    <Compile Include="Extensions\ConverterExtensions.cs" />
+    <Compile Include="Extensions\DependencyExtensions.cs" />
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Extensions\MappingExtensons.cs" />
+    <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="FluentObject.cs" />
     <Compile Include="IConditionResolver.cs" />

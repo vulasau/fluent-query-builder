@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using FluentQueryBuilder.Attributes;
 using FluentQueryBuilder.Configuration;
+using FluentQueryBuilder.Converters;
 
 namespace FluentQueryBuilder.Extensions
 {
@@ -11,14 +12,16 @@ namespace FluentQueryBuilder.Extensions
         private static readonly IExpressionTypeTransformer _expressionTypeTransformer;
         private static readonly IStringificationRulesResolver _stringificationRulesResolver;
         private static readonly NullComparisonResolverBase _nullComparisonResolver;
-        private static readonly IConverterResolver _ConverterResolver;
+        private static readonly IConverterResolver _converterResolver;
+        private static readonly IConverterFactory _converterFactory;
 
         static ExpressionExtensions()
         {
             _expressionTypeTransformer = ExpressionParserConfiguration.ExpressionTypeTransformer;
             _stringificationRulesResolver = ExpressionParserConfiguration.StringificationRulesResolver;
             _nullComparisonResolver = ExpressionParserConfiguration.NullComparisonResolver;
-            _ConverterResolver = ObjectMapperConfiguration.ConverterResolver;
+            _converterResolver = ObjectMapperConfiguration.ConverterResolver;
+            _converterFactory = ObjectMapperConfiguration.ConverterFactory;
         }
 
         public static string Parse<T>(this Expression<Func<T, bool>> predicate)
@@ -64,7 +67,11 @@ namespace FluentQueryBuilder.Extensions
             else if (expression is UnaryExpression)
             {
                 var unaryExpression = (UnaryExpression) expression;
-                return CompileExpression(unaryExpression);
+
+                if (unaryExpression.Operand is MemberExpression)
+                    return ParseExpression<T>((MemberExpression)unaryExpression.Operand);
+                else
+                    return CompileExpression(unaryExpression);
             }
             else if (expression is NewExpression)
             {
@@ -75,6 +82,53 @@ namespace FluentQueryBuilder.Extensions
             {
                 throw new InvalidOperationException(string.Format("Expression of type '{0}' is not supported.", expression.GetType().ToString()));
             }
+        }
+
+        private static bool TryProcessEnumTypeComparisonExpression<T>(this BinaryExpression binaryExpression, out string enumMemberName, out string enumComparableValue)
+        {
+            MemberExpression enumMemberExpression;
+            Expression enumValueExpression;
+
+            if(binaryExpression.Left is UnaryExpression && ((UnaryExpression)binaryExpression.Left).NodeType == ExpressionType.Convert)
+            {
+                enumMemberExpression = ((UnaryExpression)binaryExpression.Left).Operand as MemberExpression;
+                enumValueExpression = binaryExpression.Right;
+            }
+            else if(binaryExpression.Right is UnaryExpression && ((UnaryExpression)binaryExpression.Right).NodeType == ExpressionType.Convert)
+            {
+                enumMemberExpression = ((UnaryExpression)binaryExpression.Right).Operand as MemberExpression;
+                enumValueExpression = binaryExpression.Left;
+            }
+            else
+            {
+                enumMemberName = null;
+                enumComparableValue = null;
+                return false;
+            }
+
+            var enumType = enumMemberExpression.Type;
+
+            // Easy: Get enum comparison expression member name 
+            enumMemberName = ParseExpression<T>(enumMemberExpression);
+
+            // Hard: Get enum compariosn expression comparable value
+            var enumValueString = ParseExpression<T>(enumValueExpression);
+            var enumValueInterpretation = int.Parse(enumValueString);
+            var enumValue = Enum.ToObject(enumType, enumValueInterpretation);
+
+            var memberProperty = typeof(T).GetProperty(enumMemberExpression.Member.Name);
+
+            var converterAttribute = memberProperty.GetCustomAttributes(typeof(ConverterAttribute), false).SingleOrDefault() as ConverterAttribute;
+            var converterType = converterAttribute == null ? null : converterAttribute.Type;
+            var converterParameters = converterAttribute == null ? new object[0] : converterAttribute.Parameters;
+            var converter = GetConverter(converterType, memberProperty.PropertyType);
+
+            var stringify = _stringificationRulesResolver.RequiresStringification(converterAttribute.ValueType);
+
+            enumComparableValue = converter.ConvertBack(enumValue, converterParameters);
+            enumComparableValue = stringify ? WrapWithQuotes(enumComparableValue) : enumComparableValue;
+
+            return true;
         }
 
         private static string Process<T>(this BinaryExpression binaryExpression)
@@ -110,7 +164,7 @@ namespace FluentQueryBuilder.Extensions
             var stringify = _stringificationRulesResolver.RequiresStringification(constantExpression.Type);
             var value = constantExpression.Value;
 
-            var converter = _ConverterResolver.Resolve(constantExpression.Type);
+            var converter = _converterResolver.Resolve(constantExpression.Type);
             var valueString = converter.ConvertBack(value);
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
@@ -130,6 +184,7 @@ namespace FluentQueryBuilder.Extensions
         }
 
 
+
         private static string CompileExpression(Expression expression)
         {
             var stringify = _stringificationRulesResolver.RequiresStringification(expression.Type);
@@ -139,7 +194,7 @@ namespace FluentQueryBuilder.Extensions
             var getter = getterExpression.Compile();
             var value = getter();
 
-            var converter = _ConverterResolver.Resolve(expression.Type);
+            var converter = _converterResolver.Resolve(expression.Type);
             var valueString = converter.ConvertBack(value);
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
@@ -155,6 +210,8 @@ namespace FluentQueryBuilder.Extensions
 
             return propertyName;
         }
+
+
 
         private static string ResolverNullComparison(string left, string right, ExpressionType nodeType)
         {
@@ -180,6 +237,14 @@ namespace FluentQueryBuilder.Extensions
         private static string WrapWithBrackets(this string source)
         {
             return string.Format("({0})", source);
+        }
+
+        private static IPropertyConverter GetConverter(Type converterType, Type returnType)
+        {
+            if (converterType != null)
+                return _converterFactory.CreateConverter(converterType);
+
+            return _converterResolver.Resolve(returnType);
         }
     }
 }

@@ -2,28 +2,22 @@
 using System.Linq;
 using System.Reflection;
 using FluentQueryBuilder.Attributes;
-using FluentQueryBuilder.Configuration;
-using FluentQueryBuilder.Converters;
 
 namespace FluentQueryBuilder.Extensions
 {
     public static class MappingExtensons
     {
-        private static readonly IConditionResolver _conditionResolver;
-        private static readonly IConverterResolver _converterResolver;
-        private static readonly IConverterFactory _converterFactory;
-
-        static MappingExtensons()
-        {
-            _conditionResolver = ObjectMapperConfiguration.ConditionResolver;
-            _converterResolver = ObjectMapperConfiguration.ConverterResolver;
-            _converterFactory = ObjectMapperConfiguration.ConverterFactory;
-        }
-
         public static FluentObject MapToFluentObject<T>(this T source) where T : class, new()
         {
             return MapToFluentObject(source, typeof(T));
         }
+
+        public static T MapFromFluentObject<T>(this FluentObject source) where T : class, new()
+        {
+            return (T)source.MapFromFluentObject(typeof(T));
+        }
+
+
 
         public static FluentObject MapToFluentObject(this object source, Type type)
         {
@@ -50,41 +44,10 @@ namespace FluentQueryBuilder.Extensions
 
             foreach (var prop in props)
             {
-                var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
-                if (fluentPropertyAttribute == null)
-                    continue;
-
-                if (fluentPropertyAttribute.IsReadony)
-                    continue;
-
-                var conditionAttribute = prop.GetCustomAttributes(typeof(ConditionAttribute), false).SingleOrDefault() as ConditionAttribute;
-                var condition = conditionAttribute == null ? true : ValidateCondition(conditionAttribute.Name, conditionAttribute.Reverse);
-                if (!condition)
-                    continue;
-
-                var dependencyAttribute = prop.GetCustomAttributes(typeof(DependencyAttribute), false).SingleOrDefault() as DependencyAttribute;
-                var dependency = dependencyAttribute == null ? true : ValidateDependency(dependencyAttribute.PropertyName, dependencyAttribute.Reverse, source, props);
-                if (!dependency)
-                    continue;
-
-                var converterAttribute = prop.GetCustomAttributes(typeof(ConverterAttribute), false).SingleOrDefault() as ConverterAttribute;
-                var converterType = converterAttribute == null ? null : converterAttribute.Type;
-                var converterParameters = converterAttribute == null ? new object[0] : converterAttribute.Parameters;
-                var converter = GetConverter(converterType, prop.PropertyType);
-
-                var key = fluentPropertyAttribute.Name ?? prop.Name;
-                var value = prop.GetValue(source);
-                var valueString = converter != null ? converter.ConvertBack(value, converterParameters) : value.ToString();
-
-                fluentObject.Add(key, valueString);
+                prop.MapPropertyToFluentObject(source, ref fluentObject);
             }
 
             return fluentObject.Count > 0 ? fluentObject : null;
-        }
-
-        public static T MapFromFluentObject<T>(this FluentObject source) where T : class, new()
-        {
-            return (T)source.MapFromFluentObject(typeof(T));
         }
 
         public static object MapFromFluentObject(this FluentObject source, Type type)
@@ -108,68 +71,57 @@ namespace FluentQueryBuilder.Extensions
 
             foreach (var prop in props)
             {
-                var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
-                if (fluentPropertyAttribute == null)
-                    continue;
-
-                var conditionAttribute = prop.GetCustomAttributes(typeof(ConditionAttribute), false).SingleOrDefault() as ConditionAttribute;
-                var condition = conditionAttribute == null ? true : ValidateCondition(conditionAttribute.Name, conditionAttribute.Reverse);
-                if (!condition)
-                    continue;
-
-                var converterAttribute = prop.GetCustomAttributes(typeof(ConverterAttribute), false).SingleOrDefault() as ConverterAttribute;
-                var converterType = converterAttribute == null ? null : converterAttribute.Type;
-                var converterParameters = converterAttribute == null ? new object[0] : converterAttribute.Parameters;
-                var converter = GetConverter(converterType, prop.PropertyType);
-
-                var key = fluentPropertyAttribute.Name ?? prop.Name;
-                if (source.ContainsKey(key))
-                {
-                    var valueString = source[key];
-                    var value = converter != null ? converter.Convert(valueString, converterParameters) : prop.PropertyType.DefaultValue();
-                    prop.SetValue(entity, value);
-                }
+                prop.MapPropertyFromFluentObject(source, ref entity);
             }
 
             return entity;
         }
 
-        private static IPropertyConverter GetConverter(Type converterType, Type returnType)
-        {
-            if (converterType != null)
-                return _converterFactory.CreateConverter(converterType);
 
-            return _converterResolver.Resolve(returnType);
+
+        public static void MapPropertyToFluentObject(this PropertyInfo prop, object source, ref FluentObject target)
+        {
+            if (prop == null)
+                return;
+
+            if (source == null)
+                throw new ArgumentNullException("source", "Parameter 'source' should not be null.");
+
+            var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
+            if (fluentPropertyAttribute == null)
+                return;
+
+            if (fluentPropertyAttribute.IsReadony)
+                return;
+
+            var condition = prop.ValidateCondition();
+            if (!condition)
+                return;
+
+            var dependency = prop.ValidateDependencyCondition(source);
+            if (!dependency)
+                return;
+
+            prop.SetValue(source, ref target);
         }
 
-        private static bool ValidateCondition(string conditionName, bool reverse)
+        public static void MapPropertyFromFluentObject(this PropertyInfo prop, FluentObject source, ref object target)
         {
-            if (string.IsNullOrWhiteSpace(conditionName))
-                return true;
+            if (prop == null)
+                return;
 
-            if (_conditionResolver == null)
-                return true;
+            if (source == null)
+                throw new ArgumentNullException("source", "Parameter 'source' should not be null.");
 
-            return _conditionResolver.IsValid(conditionName, reverse);
-        }
+            var fluentPropertyAttribute = prop.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
+            if (fluentPropertyAttribute == null)
+                return;
 
-        private static bool ValidateDependency(string propertyName, bool reverse, object source, PropertyInfo[] properties)
-        {
-            var property = properties.FirstOrDefault(prop => string.Equals(prop.Name, propertyName));
+            var condition = prop.ValidateCondition();
+            if (!condition)
+                return;
 
-            if (property == null)
-                throw new ArgumentException(string.Format("Dependent property '{0}' was not found among class public properties.", propertyName), "dependentPropertyName");
-
-            if (property.PropertyType != typeof(bool))
-                throw new ArgumentException(string.Format("Dependent property '{0}' should be of type 'Boolean'", propertyName), "dependentPropertyName");
-
-            var fluentPropertyAttribute = property.GetCustomAttributes(typeof(FluentPropertyAttribute), false).SingleOrDefault() as FluentPropertyAttribute;
-            if (fluentPropertyAttribute != null)
-                throw new InvalidOperationException("Dependent property can not point to a FluentProperty.");
-
-            var propertyValue = (bool)property.GetValue(source);
-
-            return reverse ? !propertyValue : propertyValue;
+            prop.SetValue(source, ref target);
         }
     }
 }

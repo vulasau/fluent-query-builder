@@ -65,6 +65,9 @@
     <Compile Include="Extensions\ExpressionExtensionsTests.cs" />
     <Compile Include="Linq\BasicFluentQueryable.cs" />
     <Compile Include="Linq\FluentQueryableTests.cs" />
+    <Compile Include="Models\ConvertableModel.cs" />
+    <Compile Include="Models\Converters\EnumValueConverter.cs" />
+    <Compile Include="Models\Enums\EnumValue.cs" />
     <Compile Include="Models\NamedFluentModel.cs" />
     <Compile Include="Models\FluentModel.cs" />
     <Compile Include="Models\NamedFluentModelBase.cs" />

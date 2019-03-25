@@ -8,7 +8,8 @@ namespace FluentQueryBuilder
         {
             return type == typeof(string)
                || type == typeof(DateTime)
-               || type == typeof(DateTime?);
+               || type == typeof(DateTime?)
+               || type.IsEnum;
         }
     }
 }

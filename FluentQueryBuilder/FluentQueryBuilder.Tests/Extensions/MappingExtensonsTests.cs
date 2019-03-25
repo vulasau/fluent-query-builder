@@ -166,5 +166,31 @@ namespace FluentQueryBuilder.Tests.Extensions
             Assert.AreEqual(nestedModel.DependentProperty, NestedModelFields.DEPENDENT_FIELD_VALUE);
             Assert.AreEqual(nestedModel.DependentReversedProperty, NestedModelFields.DEPENDENT_REVERSED_FIELD_VALUE);
         }
+
+        [TestMethod]
+        public void ShouldMapEnumValuesToFluentObject()
+        {
+            var model = new ConvertableModel(true);
+
+            var fluentObject = model.MapToFluentObject();
+
+            Assert.IsNotNull(fluentObject);
+            Assert.AreEqual(fluentObject.Name, ConvertableModel.MODEL_NAME);
+
+            Assert.IsTrue(fluentObject.ContainsKey(ConvertableModel.CONVERTABLE_PROPERTY_NAME));
+            Assert.AreEqual(fluentObject[ConvertableModel.CONVERTABLE_PROPERTY_NAME], ConvertableModel.CONVERTABLE_STRING_VALUE);
+        }
+
+        [TestMethod]
+        public void ShouldMapEnumValueFromFluentObject()
+        {
+            var fluentObject = new FluentObject(ConvertableModel.MODEL_NAME);
+            fluentObject.Add(ConvertableModel.CONVERTABLE_PROPERTY_NAME, ConvertableModel.CONVERTABLE_STRING_VALUE);
+
+            var model = fluentObject.MapFromFluentObject<ConvertableModel>();
+
+            Assert.IsNotNull(model);
+            Assert.AreEqual(model.ConvertableProperty, ConvertableModel.CONVERTABLE_ENUM_VALUE);
+        }
     }
 }
