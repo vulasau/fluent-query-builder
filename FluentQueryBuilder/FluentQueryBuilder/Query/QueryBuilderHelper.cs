@@ -2,20 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentQueryBuilder.Attributes;
-using FluentQueryBuilder.Configuration;
 using FluentQueryBuilder.Extensions;
 
 namespace FluentQueryBuilder.Query
 {
     public static class QueryBuilderHelper
     {
-        private static IConditionResolver _conditionResolver;
-
-        static QueryBuilderHelper()
-        {
-            _conditionResolver = ObjectMapperConfiguration.ConditionResolver;
-        }
-
         public static string GetFluentEntityName<T>() where T : class, new()
         {
             return GetFluentEntityName(typeof(T));
@@ -64,8 +56,7 @@ namespace FluentQueryBuilder.Query
                 if (fluentPropertyAttribute == null)
                     continue;
 
-                var conditionAttribute = prop.GetCustomAttributes(typeof(ConditionAttribute), false).SingleOrDefault() as ConditionAttribute;
-                var condition = conditionAttribute == null ? true : ValidateCondition(conditionAttribute.Name, conditionAttribute.Reverse);
+                var condition = prop.ValidateCondition();
                 if (!condition)
                     continue;
 
@@ -74,17 +65,6 @@ namespace FluentQueryBuilder.Query
             }
 
             return propertyNames;
-        }
-
-        private static bool ValidateCondition(string conditionName, bool reverse)
-        {
-            if (string.IsNullOrWhiteSpace(conditionName))
-                return true;
-
-            if (_conditionResolver == null)
-                return true;
-
-            return _conditionResolver.IsValid(conditionName, reverse);
         }
     }
 }
