@@ -7,6 +7,12 @@ namespace FluentQueryBuilder.Extensions
 {
     public static class PropertyExtensions
     {
+        /// <summary>
+        /// Sets the value of given property for given FluentObject.
+        /// </summary>
+        /// <param name="prop">Source property</param>
+        /// <param name="source">Source object</param>
+        /// <param name="target">Target FluentObject</param>
         public static void SetValue(this PropertyInfo prop, object source, ref FluentObject target)
         {
             if (prop == null)
@@ -29,6 +35,12 @@ namespace FluentQueryBuilder.Extensions
             target.Add(key, valueString);
         }
 
+        /// <summary>
+        /// Sets the value of given property for given object
+        /// </summary>
+        /// <param name="prop">Source property</param>
+        /// <param name="source">Source FluentObject</param>
+        /// <param name="target">Target object</param>
         public static void SetValue(this PropertyInfo prop, FluentObject source, ref object target)
         {
             if (prop == null)

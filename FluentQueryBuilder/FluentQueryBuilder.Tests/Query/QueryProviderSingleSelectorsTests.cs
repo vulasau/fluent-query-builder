@@ -35,29 +35,11 @@ namespace FluentQueryBuilder.Tests.Query
         [TestMethod]
         public void ShouldBuildFirstOrDefaultEnumComparisonPredicateQuery()
         {
-            var actions = new Actions();
             var queryProvider = new QueryProvider<ConvertableModel>();
 
-            var query = queryProvider.FirstOrDefault(x => x.IntegerProperty > actions.GetDoubleValue());
-            var expectedString = "SELECT ConvertableProperty_c, IntegerProperty FROM ConvertableModel \r\nWHERE (IntegerProperty > 0.5) \r\nLIMIT 1\r\n";
+            var query = queryProvider.FirstOrDefault(x => x.ConvertableProperty != EnumValue.FirstValue);
+            var expectedString = "SELECT ConvertableProperty_c FROM ConvertableModel \r\nWHERE (ConvertableProperty_c != 'First Value') \r\nLIMIT 1\r\n";
             Assert.AreEqual(expectedString, query);
-
-            query = queryProvider.FirstOrDefault(x => x.ConvertableProperty != actions.GetEnumValue());
-            expectedString = "SELECT ConvertableProperty_c, IntegerProperty FROM ConvertableModel \r\nWHERE (ConvertableProperty_c != 'First Value') \r\nLIMIT 1\r\n";
-            Assert.AreEqual(expectedString, query);
-        }
-
-        private class Actions
-        {
-            public double GetDoubleValue()
-            {
-                return 0.5;
-            }
-
-            public EnumValue GetEnumValue()
-            {
-                return EnumValue.FirstValue;
-            }
         }
     }
 }

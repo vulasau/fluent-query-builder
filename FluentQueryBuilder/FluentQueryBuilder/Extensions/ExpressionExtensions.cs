@@ -3,7 +3,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using FluentQueryBuilder.Attributes;
 using FluentQueryBuilder.Configuration;
-using FluentQueryBuilder.Converters;
 
 namespace FluentQueryBuilder.Extensions
 {
@@ -11,17 +10,13 @@ namespace FluentQueryBuilder.Extensions
     {
         private static readonly IExpressionTypeTransformer _expressionTypeTransformer;
         private static readonly IStringificationRulesResolver _stringificationRulesResolver;
-        private static readonly NullComparisonResolverBase _nullComparisonResolver;
-        private static readonly IConverterResolver _converterResolver;
-        private static readonly IConverterFactory _converterFactory;
+        private static readonly INullComparisonResolver _nullComparisonResolver;
 
         static ExpressionExtensions()
         {
             _expressionTypeTransformer = ExpressionParserConfiguration.ExpressionTypeTransformer;
             _stringificationRulesResolver = ExpressionParserConfiguration.StringificationRulesResolver;
             _nullComparisonResolver = ExpressionParserConfiguration.NullComparisonResolver;
-            _converterResolver = ObjectMapperConfiguration.ConverterResolver;
-            _converterFactory = ObjectMapperConfiguration.ConverterFactory;
         }
 
         public static string Parse<T>(this Expression<Func<T, bool>> predicate)
@@ -41,6 +36,7 @@ namespace FluentQueryBuilder.Extensions
 
             throw new ArgumentException("Parameter 'expression' should be of type 'MemberExpression'", "expression");
         }
+
 
         private static string ParseExpression<T>(Expression expression)
         {
@@ -84,52 +80,6 @@ namespace FluentQueryBuilder.Extensions
             }
         }
 
-        private static bool TryProcessEnumTypeComparisonExpression<T>(this BinaryExpression binaryExpression, out string enumMemberName, out string enumComparableValue)
-        {
-            MemberExpression enumMemberExpression;
-            Expression enumValueExpression;
-
-            if(binaryExpression.Left is UnaryExpression && ((UnaryExpression)binaryExpression.Left).NodeType == ExpressionType.Convert)
-            {
-                enumMemberExpression = ((UnaryExpression)binaryExpression.Left).Operand as MemberExpression;
-                enumValueExpression = binaryExpression.Right;
-            }
-            else if(binaryExpression.Right is UnaryExpression && ((UnaryExpression)binaryExpression.Right).NodeType == ExpressionType.Convert)
-            {
-                enumMemberExpression = ((UnaryExpression)binaryExpression.Right).Operand as MemberExpression;
-                enumValueExpression = binaryExpression.Left;
-            }
-            else
-            {
-                enumMemberName = null;
-                enumComparableValue = null;
-                return false;
-            }
-
-            var enumType = enumMemberExpression.Type;
-
-            // Easy: Get enum comparison expression member name 
-            enumMemberName = ParseExpression<T>(enumMemberExpression);
-
-            // Hard: Get enum compariosn expression comparable value
-            var enumValueString = ParseExpression<T>(enumValueExpression);
-            var enumValueInterpretation = int.Parse(enumValueString);
-            var enumValue = Enum.ToObject(enumType, enumValueInterpretation);
-
-            var memberProperty = typeof(T).GetProperty(enumMemberExpression.Member.Name);
-
-            var converterAttribute = memberProperty.GetCustomAttributes(typeof(ConverterAttribute), false).SingleOrDefault() as ConverterAttribute;
-            var converterType = converterAttribute == null ? null : converterAttribute.Type;
-            var converterParameters = converterAttribute == null ? new object[0] : converterAttribute.Parameters;
-            var converter = GetConverter(converterType, memberProperty.PropertyType);
-
-            var stringify = _stringificationRulesResolver.RequiresStringification(converterAttribute.ValueType);
-
-            enumComparableValue = converter.ConvertBack(enumValue, converterParameters);
-            enumComparableValue = stringify ? WrapWithQuotes(enumComparableValue) : enumComparableValue;
-
-            return true;
-        }
 
         private static string Process<T>(this BinaryExpression binaryExpression)
         {
@@ -143,13 +93,19 @@ namespace FluentQueryBuilder.Extensions
                 // Ignoring if not evaluatable and parsing
             }
 
-            var left = ParseExpression<T>(binaryExpression.Left);
-            if (binaryExpression.Left is BinaryExpression)
-                left = left.WrapWithBrackets();
+            string left, right = null;
 
-            var right = ParseExpression<T>(binaryExpression.Right);
-            if (binaryExpression.Right is BinaryExpression)
-                right = right.WrapWithBrackets();
+            var preprocessed = PreProcess<T>(binaryExpression, out left, out right);
+            if (!preprocessed)
+            {
+                left = ParseExpression<T>(binaryExpression.Left);
+                if (binaryExpression.Left is BinaryExpression)
+                    left = left.WrapWithBrackets();
+
+                right = ParseExpression<T>(binaryExpression.Right);
+                if (binaryExpression.Right is BinaryExpression)
+                    right = right.WrapWithBrackets();
+            }
 
             var node = _expressionTypeTransformer.Transform(binaryExpression.NodeType);
 
@@ -164,7 +120,7 @@ namespace FluentQueryBuilder.Extensions
             var stringify = _stringificationRulesResolver.RequiresStringification(constantExpression.Type);
             var value = constantExpression.Value;
 
-            var converter = _converterResolver.Resolve(constantExpression.Type);
+            var converter = ConverterExtensions.GetConverter(null, constantExpression.Type);
             var valueString = converter.ConvertBack(value);
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
@@ -183,6 +139,52 @@ namespace FluentQueryBuilder.Extensions
                 return CompileExpression(memberExpression);
         }
 
+        private static bool PreProcess<T>(this BinaryExpression binaryExpression, out string enumMemberName, out string enumCompareValue)
+        {
+            Type type = null;
+            Type memberType = null;
+            string memberName = null;
+            string valueInterpretationString = null;
+
+            if (binaryExpression.Left is UnaryExpression && ((UnaryExpression)binaryExpression.Left).Operand is MemberExpression)
+            {
+                type = binaryExpression.Left.Type;
+                memberType = ((UnaryExpression)binaryExpression.Left).Operand.Type;
+                memberName = ParseExpression<T>(binaryExpression.Left);
+                valueInterpretationString = ParseExpression<T>(binaryExpression.Right);
+            }
+            else if (binaryExpression.Right is UnaryExpression && ((UnaryExpression)binaryExpression.Right).Operand is MemberExpression)
+            {
+                type = binaryExpression.Right.Type;
+                memberType = ((UnaryExpression)binaryExpression.Right).Operand.Type;
+                memberName = ParseExpression<T>(binaryExpression.Right);
+                valueInterpretationString = ParseExpression<T>(binaryExpression.Left);
+            }
+
+            if (memberType != null && memberType.IsEnum)
+            {
+                var valueInterpretation = int.Parse(valueInterpretationString);
+                var value = Enum.ToObject(memberType, valueInterpretation);
+
+                var prop = typeof(T).GetFluentProperty(memberName);
+
+                object[] converterParameters;
+                var converter = prop.GetConverter(out converterParameters);
+                var valueString = converter.ConvertBack(value, converterParameters);
+
+                var stringify = _stringificationRulesResolver.RequiresStringification(memberType);
+                if (stringify)
+                    valueString = valueString.WrapWithQuotes();
+
+                enumMemberName = memberName;
+                enumCompareValue = valueString;
+                return true;
+            }
+
+            enumMemberName = null;
+            enumCompareValue = null;
+            return false;
+        }
 
 
         private static string CompileExpression(Expression expression)
@@ -194,7 +196,7 @@ namespace FluentQueryBuilder.Extensions
             var getter = getterExpression.Compile();
             var value = getter();
 
-            var converter = _converterResolver.Resolve(expression.Type);
+            var converter = ConverterExtensions.GetConverter(null, expression.Type);
             var valueString = converter.ConvertBack(value);
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
@@ -212,7 +214,6 @@ namespace FluentQueryBuilder.Extensions
         }
 
 
-
         private static string ResolverNullComparison(string left, string right, ExpressionType nodeType)
         {
             if (nodeType != ExpressionType.Equal && nodeType != ExpressionType.NotEqual)
@@ -227,24 +228,6 @@ namespace FluentQueryBuilder.Extensions
                 return _nullComparisonResolver.GenerateExpression(right, isNegative);
             else
                 return _nullComparisonResolver.GenerateExpression(left, isNegative);
-        }
-
-        private static string WrapWithQuotes(this string source)
-        {
-            return string.Format("'{0}'", source);
-        }
-
-        private static string WrapWithBrackets(this string source)
-        {
-            return string.Format("({0})", source);
-        }
-
-        private static IPropertyConverter GetConverter(Type converterType, Type returnType)
-        {
-            if (converterType != null)
-                return _converterFactory.CreateConverter(converterType);
-
-            return _converterResolver.Resolve(returnType);
         }
     }
 }

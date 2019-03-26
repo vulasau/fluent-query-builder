@@ -6,7 +6,7 @@ namespace FluentQueryBuilder.Configuration
     {
         public static IExpressionTypeTransformer ExpressionTypeTransformer { get; private set; }
         public static IStringificationRulesResolver StringificationRulesResolver { get; private set; }
-        public static NullComparisonResolverBase NullComparisonResolver { get; private set; }
+        public static INullComparisonResolver NullComparisonResolver { get; private set; }
 
         static ExpressionParserConfiguration()
         {
@@ -31,7 +31,7 @@ namespace FluentQueryBuilder.Configuration
             StringificationRulesResolver = stringificationRulesResolver;
         }
 
-        public static void Use(NullComparisonResolverBase nullComparisonResolver)
+        public static void Use(INullComparisonResolver nullComparisonResolver)
         {
             if (nullComparisonResolver == null)
                 throw new ArgumentNullException("nullComparisonResolver", "'NullComparisonResolver' parameter should be set to non nullable value.");

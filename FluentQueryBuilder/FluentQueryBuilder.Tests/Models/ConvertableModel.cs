@@ -17,9 +17,6 @@ namespace FluentQueryBuilder.Tests.Models
         [Converter(typeof(EnumValueConverter), typeof(string))]
         public EnumValue ConvertableProperty { get; set; }
 
-        [FluentProperty]
-        public int IntegerProperty { get; set; }
-
         public ConvertableModel()
         {
 

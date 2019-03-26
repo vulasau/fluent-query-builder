@@ -7,6 +7,16 @@ namespace FluentQueryBuilder.Extensions
 {
     public static class DependencyExtensions
     {
+        /// <summary>
+        /// Validates if dependent property condition is valid for given property.
+        /// </summary>
+        /// <param name="prop">Source property</param>
+        /// <param name="source">Source object</param>
+        /// <returns>
+        /// 'True' if DependencyAttribute is not set,
+        /// 'True' if DependencyAttribute is set and dependent property values is 'True',
+        /// 'False' in other cases.
+        /// </returns>
         public static bool ValidateDependencyCondition(this PropertyInfo prop, object source)
         {
             if (prop == null)

@@ -15,6 +15,15 @@ namespace FluentQueryBuilder.Extensions
             _conditionResolver = ObjectMapperConfiguration.ConditionResolver;
         }
 
+        /// <summary>
+        /// Validates condition for given property using ObjectMapperConfiguration.ConditionResolver
+        /// </summary>
+        /// <param name="prop">Source property</param>
+        /// <returns>
+        /// 'Ture' if condition is not set,
+        /// 'True' if condition is set and resolved as 'True',
+        /// 'False' in other cases,
+        /// </returns>
         public static bool ValidateCondition(this PropertyInfo prop)
         {
             if (prop == null)
