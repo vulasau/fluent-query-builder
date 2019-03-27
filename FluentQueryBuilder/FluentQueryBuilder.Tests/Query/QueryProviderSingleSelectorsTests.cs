@@ -37,8 +37,8 @@ namespace FluentQueryBuilder.Tests.Query
         {
             var queryProvider = new QueryProvider<ConvertableModel>();
 
-            var query = queryProvider.FirstOrDefault(x => x.ConvertableProperty != EnumValue.FirstValue);
-            var expectedString = "SELECT ConvertableProperty_c FROM ConvertableModel \r\nWHERE (ConvertableProperty_c != 'First Value') \r\nLIMIT 1\r\n";
+            var query = queryProvider.FirstOrDefault(x => x.ConvertableProperty != EnumValue.Unknown);
+            var expectedString = "SELECT ConvertableProperty_c FROM ConvertableModel \r\nWHERE (ConvertableProperty_c != NULL) \r\nLIMIT 1\r\n";
             Assert.AreEqual(expectedString, query);
         }
     }

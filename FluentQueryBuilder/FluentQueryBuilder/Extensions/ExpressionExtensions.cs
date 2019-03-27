@@ -123,6 +123,9 @@ namespace FluentQueryBuilder.Extensions
             var converter = ConverterExtensions.GetConverter(null, constantExpression.Type);
             var valueString = converter.ConvertBack(value);
 
+            if (valueString == null)
+                return null;
+
             return stringify ? valueString.WrapWithQuotes() : valueString;
         }
 
@@ -173,7 +176,7 @@ namespace FluentQueryBuilder.Extensions
                 var valueString = converter.ConvertBack(value, converterParameters);
 
                 var stringify = _stringificationRulesResolver.RequiresStringification(memberType);
-                if (stringify)
+                if (valueString != null && stringify)
                     valueString = valueString.WrapWithQuotes();
 
                 enumMemberName = memberName;
@@ -198,6 +201,9 @@ namespace FluentQueryBuilder.Extensions
 
             var converter = ConverterExtensions.GetConverter(null, expression.Type);
             var valueString = converter.ConvertBack(value);
+
+            if (valueString == null)
+                return null;
 
             return stringify ? valueString.WrapWithQuotes() : valueString;
         }
