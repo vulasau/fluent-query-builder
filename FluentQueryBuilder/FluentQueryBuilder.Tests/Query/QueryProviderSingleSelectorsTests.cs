@@ -41,5 +41,21 @@ namespace FluentQueryBuilder.Tests.Query
             var expectedString = "SELECT ConvertableProperty_c FROM ConvertableModel \r\nWHERE (ConvertableProperty_c != NULL) \r\nLIMIT 1\r\n";
             Assert.AreEqual(expectedString, query);
         }
+
+        [TestMethod]
+        public void ShouldBuildFirstOrDefaultOrderedQueryWithPredicate()
+        {
+            var query = _queryProvider.OrderByDescending(x => x.IntegerProperty).FirstOrDefault(x => x.ConditionedProperty == "42");
+            var expectedString = "SELECT boolean, conditioned, date, double, integer, object, readonly FROM model \r\nWHERE (conditioned = '42') \r\nORDER BY integer DESC NULLS LAST \r\nLIMIT 1\r\n";
+            Assert.AreEqual(expectedString, query);
+        }
+
+        [TestMethod]
+        public void ShouldBuildFirstOrDefaultOrderedQuery()
+        {
+            var query = _queryProvider.OrderBy(x => x.IntegerProperty).FirstOrDefault();
+            var expectedString = "SELECT boolean, conditioned, date, double, integer, object, readonly FROM model \r\nORDER BY integer ASC NULLS LAST \r\nLIMIT 1\r\n";
+            Assert.AreEqual(expectedString, query);
+        }
     }
 }
