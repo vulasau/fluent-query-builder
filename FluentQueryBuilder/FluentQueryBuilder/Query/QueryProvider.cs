@@ -65,6 +65,9 @@ namespace FluentQueryBuilder.Query
             if (!string.IsNullOrWhiteSpace(_condition))
                 query.AppendLine(_condition);
 
+            if (!string.IsNullOrWhiteSpace(_ordering))
+                query.AppendLine(_ordering);
+
             var limit = "LIMIT 1";
             query.AppendLine(limit);
 
@@ -86,6 +89,9 @@ namespace FluentQueryBuilder.Query
                 _condition = string.Format("WHERE ({0}) ", condition);
 
             query.AppendLine(_condition);
+
+            if (!string.IsNullOrWhiteSpace(_ordering))
+                query.AppendLine(_ordering);
 
             var limit = "LIMIT 1";
             query.AppendLine(limit);
